@@ -6,6 +6,7 @@ class login extends CI_Controller {
 
 	public function index()
 	{
+		//ada
 		$this->load->model('login_m');
 		$data=$this->login_m->data();	
 		$this->parser->parse('login_v',$data);
