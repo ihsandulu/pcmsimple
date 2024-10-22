@@ -120,7 +120,7 @@
 				<div align="center"><?=$identity_company;?>, <?=date("d F Y",strtotime($invpayment_date));?></div>
 				<div  style="height:100px;">
 				<?php if($identity_stempel!=""){?>
-				<img src="<?=base_url("assets/images/identity_picture/".$identity_stempel);?>" style="height:100%; width:auto;"/>
+				<img src="<?=base_url("assets/images/identity_stempel/".$identity_stempel);?>" style="height:100%; width:auto;"/>
 				<?php }?>
 				</div>
 				<?php if($invpayment_prepareby==""){$ttd="_____________________";}else{$ttd=$invpayment_prepareby;}?>

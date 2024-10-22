@@ -183,7 +183,7 @@
 											<input type="text" class="form-control" id="identity_web" name="identity_web" placeholder="Enter Site" value="<?= $identity_web; ?>">
 										</div>
 									</div>
-									<div class="form-group">
+									<!-- <div class="form-group">
 										<label class="control-label col-sm-2" for="identity_stempel">Stempel:</label>
 										<div class="col-sm-10">
 											<select name="identity_stempel" id="identity_stempel" class="form-control">
@@ -192,7 +192,7 @@
 											</select>
 										</div>
 										<label class="control-label col-sm-12 keterangan">(Stempel dan tandatangan otomatis)</label>
-									</div>
+									</div> -->
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="identity_kop">Kop Surat:</label>
 										<div class="col-sm-10">
@@ -342,34 +342,58 @@
 							  </div>-->
 
 									<div class="form-group">
-										<label class="control-label col-sm-2" for="identity_picture">Picture:</label>
+										<label class="control-label col-sm-2" for="identity_picture">Logo:</label>
 										<div class="col-sm-10" align="left">
 											<input type="file" id="identity_picture" name="identity_picture"><br />
 											<?php if ($identity_picture != "") {
-												$user_image = "assets/images/identity_picture/" . $identity_picture;
+												$user_image_logo = "assets/images/identity_picture/" . $identity_picture;
 											} else {
-												$user_image = "assets/images/identity_picture/image.gif";
+												$user_image_logo = "assets/images/identity_picture/image.gif";
 											} ?>
-											<img id="identity_picture_image" width="100" height="100" src="<?= base_url($user_image); ?>" />
-											<script>
-												function readURL(input) {
-													if (input.files && input.files[0]) {
-														var reader = new FileReader();
+											<img id="identity_picture_image" width="100" height="100" src="<?= base_url($user_image_logo); ?>" />
 
-														reader.onload = function(e) {
-															$('#identity_picture_image').attr('src', e.target.result);
-														}
-
-														reader.readAsDataURL(input.files[0]);
-													}
-												}
-
-												$("#identity_picture").change(function() {
-													readURL(this);
-												});
-											</script>
 										</div>
 									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="identity_stempel">Stempel:</label>
+										<div class="col-sm-10" align="left">
+											<input type="file" id="identity_stempel" name="identity_stempel"><br />
+											<?php if ($identity_stempel != "") {
+												$user_image_stempel = "assets/images/identity_stempel/" . $identity_stempel;
+											} else {
+												$user_image_stempel = "assets/images/identity_stempel/image.gif";
+											} ?>
+											<img id="identity_stempel_image" width="100" height="100" src="<?= base_url($user_image_stempel); ?>" />
+
+										</div>
+									</div>
+
+									<script>
+										$(document).ready(function() {
+											// Fungsi untuk preview gambar
+											function readURL(input, imageId) {
+												if (input.files && input.files[0]) {
+													var reader = new FileReader();
+													reader.onload = function(e) {
+														$(imageId).attr('src', e.target.result);
+													}
+													reader.readAsDataURL(input.files[0]);
+												}
+											}
+
+											// Event handler untuk identity_picture
+											$("#identity_picture").change(function() {
+												readURL(this, '#identity_picture_image');
+											});
+
+											// Event handler untuk identity_stempel
+											$("#identity_stempel").change(function() {
+												readURL(this, '#identity_stempel_image');
+											});
+										});
+									</script>
+
 
 									<input type="hidden" name="identity_id" value="<?= $identity_id; ?>" />
 									<div class="form-group">
