@@ -209,6 +209,7 @@
 									<table id="dataTable" class="table table-condensed table-hover">
 										<thead>
 											<tr>
+											<th class="col-md-2">Action</th>
 												<th>No.</th>
 												<th>Product</th>
 												<th>Qty</th>
@@ -218,7 +219,7 @@
 													<th>Height</th>
 												<?php } ?>
 												<th>Price</th>
-												<th class="col-md-2">Action</th>
+												<th>Remarks</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -230,15 +231,6 @@
 											$no = 1;
 											foreach ($usr->result() as $invproduct) { ?>
 												<tr>
-													<td><?= $no++; ?></td>
-													<td><?= $invproduct->product_name; ?></td>
-													<td><?= $invproduct->invproduct_qty; ?></td>
-													<?php if ($identity->identity_dimension == 1) { ?>
-														<td><?= $invproduct->invproduct_panjang; ?> <?= $invproduct->invproduct_unit; ?></td>
-														<td><?= $invproduct->invproduct_lebar; ?> <?= $invproduct->invproduct_unit; ?></td>
-														<td><?= $invproduct->invproduct_tinggi; ?> <?= $invproduct->invproduct_unit; ?></td>
-													<?php } ?>
-													<td><?= number_format($invproduct->invproduct_price, 2, ",", "."); ?></td>
 													<td style="padding-left:0px; padding-right:0px;">
 														<?php if ($identity->identity_stok == 1) { ?>
 															<form method="post" action="<?= site_url("invproduct?inv_no=" . $invproduct->inv_no . "&customer_id=" . $this->input->get("customer_id") . "&bap=OK&bap_remarks=Reject Product Invoice " . $invproduct->inv_no); ?>" method="post" method="post" class="col-md-3" style="padding:0px;">
@@ -261,6 +253,16 @@
 															<input type="hidden" name="gudang_id" value="<?= $invproduct->gudang_id; ?>" />
 														</form>
 													</td>
+													<td><?= $no++; ?></td>
+													<td><?= $invproduct->product_name; ?></td>
+													<td><?= $invproduct->invproduct_qty; ?></td>
+													<?php if ($identity->identity_dimension == 1) { ?>
+														<td><?= $invproduct->invproduct_panjang; ?> <?= $invproduct->invproduct_unit; ?></td>
+														<td><?= $invproduct->invproduct_lebar; ?> <?= $invproduct->invproduct_unit; ?></td>
+														<td><?= $invproduct->invproduct_tinggi; ?> <?= $invproduct->invproduct_unit; ?></td>
+													<?php } ?>
+													<td><?= number_format($invproduct->invproduct_price, 2, ",", "."); ?></td>
+													<td><?= $invproduct->invproduct_remarks; ?></td>
 												</tr>
 											<?php } ?>
 										</tbody>

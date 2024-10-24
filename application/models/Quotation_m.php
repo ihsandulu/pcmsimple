@@ -216,6 +216,7 @@ class quotation_M extends CI_Model {
 	 
 		//delete
 		if($this->input->post("delete")=="OK"){
+			// print_r($_POST);die;
 			//cek product ada tidak
 			$cek=$this->db
 			->where("quotation_id",$this->input->post("quotation_id"))
@@ -224,10 +225,11 @@ class quotation_M extends CI_Model {
 				$data["message"]="Delete Failed.<br/>Please remove the product first";
 			}else{
 				$input["quotation_no"]="";
-				$input["quotation_id"]="0";
+				// $input["quotation_id"]="0";
 				$where["quotation_no"]=$this->input->post("quotation_no");
-				$where["quotation_id"]=$this->input->post("quotation_id");
+				// $where["quotation_id"]=$this->input->post("quotation_id");
 				$this->db->update("poc",$input,$where);
+				// echo $this->db->last_query();
 				$this->db->delete("quotation",array("quotation_id"=>$this->input->post("quotation_id")));
 				$data["message"]="Delete Success";
 			}

@@ -100,7 +100,7 @@ $identity=$this->db->get("identity")->row();?>
             <tr>
               <td style="text-align:center;"><?=$no++;?>&nbsp;</td>
               <td style="text-align:center;"><?=$product->product_name;?>&nbsp;</td>
-              <td style="text-align:center;"><?=$product->product_description;?>&nbsp;</td>
+              <td style="text-align:center;"><?=$product->product_description;?><?=($product->invproduct_remarks!="")?" | ".$product->invproduct_remarks:"";?>&nbsp;</td>
               <td style="text-align:center;"><?=$product->invproduct_qty;?>&nbsp;</td>
               <td style="text-align:right;"><?=number_format($product->invproduct_price,2,",",".");?>&nbsp;</td>
               <td style="text-align:right;"><?=number_format($product->invproduct_qty*$product->invproduct_price,2,",",".");$to+=$product->invproduct_qty*$product->invproduct_price;?>&nbsp;</td>
