@@ -41,6 +41,21 @@
 		if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
 	})
 
+	function openInNewWindow(event) {
+        event.preventDefault();
+        
+        // Membuka jendela baru
+        const form = event.target;
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        
+        // URL dengan parameter
+        const url = form.action + "?" + params;
+        
+        // Buka sebagai jendela baru dan simpan referensi "opener"
+        window.open(url, "_blank");
+    }
+
 	function bukaproduk(url) {
 		window.open(url, '_blank');
 	}
@@ -77,7 +92,6 @@
 </script>
 
 <script>
-	// tarik
 	const tableContainer = document.querySelector('.tarik');
 
 	let isDown = false;

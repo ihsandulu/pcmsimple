@@ -139,7 +139,7 @@ class task_M extends CI_Model
 		if ($this->input->post("change") == "OK") {
 
 			foreach ($this->input->post() as $e => $f) {
-				if ($e != 'change' && $e != 'user_name' && $e != 'customer_name') {
+				if ($e != 'change' && $e != 'user_name' && $e != 'customer_name' && $e != 'bantuan') {
 					$input[$e] = $this->input->post($e);
 				}
 			}

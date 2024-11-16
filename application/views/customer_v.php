@@ -28,20 +28,20 @@
 				</h1>
 			</form>
 			<script>
-        $(document).ready(function() {
-            if (sessionStorage.getItem('openedFromLink')) {
-                $('#closeBtn').show(); 
-                $('#col10').removeClass('col-md-10').addClass('col-md-8'); 
-                // sessionStorage.removeItem('openedFromLink');
-            }
-        });
+				$(document).ready(function() {
+					if (sessionStorage.getItem('openedFromLink')) {
+						$('#closeBtn').show();
+						$('#col10').removeClass('col-md-10').addClass('col-md-8');
+						// sessionStorage.removeItem('openedFromLink');
+					}
+				});
 
-        function tutup() {
-			window.opener.location.reload();
-			sessionStorage.removeItem('openedFromLink');
-            window.close(); // Menutup jendela
-        }
-    </script>
+				function tutup() {
+					window.opener.location.reload();
+					sessionStorage.removeItem('openedFromLink');
+					window.close(); // Menutup jendela
+				}
+			</script>
 			<?php if (!isset($_POST['new']) && !isset($_POST['edit'])) { ?>
 				<form method="post" class="col-md-2">
 					<h1 class="page-header col-md-12">
@@ -101,6 +101,19 @@
 												foreach ($branch->result() as $branch) {
 												?>
 													<option value="<?= $branch->branch_id; ?>" <?= ($branch_id == $branch->branch_id) ? "selected" : ""; ?>><?= $branch->branch_name; ?></option>
+												<?php } ?>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="hunian_id">Hunian:</label>
+										<div class="col-sm-10">
+											<select class="form-control" id="hunian_id" name="hunian_id">
+												<option value="" <?= ($hunian_id == "") ? "selected" : ""; ?>>Pilih Hunian</option>
+												<?php $hunian = $this->db->get("hunian");
+												foreach ($hunian->result() as $hunian) {
+												?>
+													<option value="<?= $hunian->hunian_id; ?>" <?= ($hunian_id == $hunian->hunian_id) ? "selected" : ""; ?>><?= $hunian->hunian_name; ?></option>
 												<?php } ?>
 											</select>
 										</div>
@@ -177,41 +190,68 @@
 								</div>
 							<?php } ?>
 							<div class="box">
+								<form id="importn" method="post" class="col-md-12 form well" enctype="multipart/form-data">
+									<div class="form-group">
+										<label>Import Excel : </label>
+										<input class="form-control" name="filecustomer" type="file" />
+									</div>
+									<div class="form-group">
+										<button class="btn btn-primary" type="submit" name="import">Import</button>
+										<button class="btn btn-danger" type="button" onclick="tutupimport()">Close</button>
+									</div>
+								</form>
+								<button id="btnimport" class="btn btn-primary" type="button" onclick="bukaimport()">Import Excel</button>
+								<button id="btntemplate" class="btn btn-success" type="button" onclick="downloadtemplate()"><i class="fa fa-print"></i> Download Excel Template</button>
+								<script>
+									function tutupimport() {
+										$("#importn").hide();
+										$("#btnimport").show();
+									}
+
+									function bukaimport() {
+										$("#importn").show();
+										$("#btnimport").hide();
+									}
+									tutupimport();
+
+									function downloadtemplate() {
+										window.open("<?= base_url("customer1.xlsx"); ?>", '_self');
+									}
+								</script>
+								<br />
+								<br />
 								<div id="collapse4" class="body table-responsive">
-									<table id="dataTable" class="table table-condensed table-hover">
+									<table id="table" class="table table-condensed table-hover">
 										<thead>
 											<tr>
-												<th>No.</th>
+												<th class="col-md-2 noExport">Action</th>
+												<!-- <th>No.</th> -->
+												<th>Date</th>
+												<th>Branch</th>
+												<th>Hunian</th>
 												<th>Customer</th>
 												<?php if ($identity->identity_saldocustomer == 1) { ?>
 													<th>Saldo</th>
 												<?php } ?>
-												<th>Branch</th>
 												<th>Email</th>
 												<th>Address</th>
 												<th>Phone</th>
+												<th>Whatsapp</th>
 												<th>CP</th>
-												<th class="col-md-2">Action</th>
+												<th>KTP</th>
+												<th>NPWP</th>
+												<th>Fax</th>
 											</tr>
 										</thead>
 										<tbody>
 											<?php $usr = $this->db
 												->join("branch", "branch.branch_id=customer.branch_id", "left")
+												->join("hunian", "hunian.hunian_id=customer.hunian_id", "left")
 												->order_by("customer_id", "desc")
 												->get("customer");
 											$no = 1;
 											foreach ($usr->result() as $customer) { ?>
 												<tr>
-													<td><?= $no++; ?></td>
-													<td><?= $customer->customer_name; ?></td>
-													<?php if ($identity->identity_saldocustomer == 1) { ?>
-														<td><?= number_format($customer->customer_saldo, 0, ",", "."); ?></td>
-													<?php } ?>
-													<td><?= $customer->branch_name; ?></td>
-													<td><?= $customer->customer_email; ?></td>
-													<td><?= $customer->customer_address; ?></td>
-													<td><?= $customer->customer_phone; ?></td>
-													<td><?= $customer->customer_cp; ?></td>
 													<td style="padding-left:0px; padding-right:0px;">
 														<?php if ($identity->identity_productcustomer == 1) { ?>
 															<form target="_blank" action="customerproduct" method="get" class="col-md-4" style="padding:0px; float:left;">
@@ -229,6 +269,22 @@
 															<input type="hidden" name="customer_id" value="<?= $customer->customer_id; ?>" />
 														</form>
 													</td>
+													<!-- <td><?= $no++; ?></td> -->
+													<td><?= $customer->customer_date; ?></td>
+													<td><?= $customer->branch_name; ?></td>
+													<td><?= $customer->hunian_name; ?></td>
+													<td><?= $customer->customer_name; ?></td>
+													<?php if ($identity->identity_saldocustomer == 1) { ?>
+														<td><?= number_format($customer->customer_saldo, 0, ",", "."); ?></td>
+													<?php } ?>
+													<td><?= $customer->customer_email; ?></td>
+													<td><?= $customer->customer_address; ?></td>
+													<td><?= $customer->customer_phone; ?></td>
+													<td><?= $customer->customer_wa; ?></td>
+													<td><?= $customer->customer_cp; ?></td>
+													<td><?= $customer->customer_ktp; ?></td>
+													<td><?= $customer->customer_npwp; ?></td>
+													<td><?= $customer->customer_fax; ?></td>
 												</tr>
 											<?php } ?>
 										</tbody>
@@ -243,6 +299,31 @@
 	</div>
 	<!-- /#wrap -->
 	<?php require_once("footer.php"); ?>
+	<script>
+		$(document).ready(function() {
+			$('#table').DataTable({
+				dom: 'Bfrtip',
+				buttons: [{
+						extend: 'print',
+						text: 'Print',
+						title: 'Customer Data',
+						exportOptions: {
+							columns: ':not(.noExport)' // Mengabaikan kolom dengan class 'noExport'
+						}
+					},
+					{
+						extend: 'excelHtml5',
+						text: 'Export to Excel',
+						filename: 'Customer Data', // Nama file Excel yang dihasilkan
+						title: 'Customer Data',
+						exportOptions: {
+							columns: ':not(.noExport)' // Mengabaikan kolom dengan class 'noExport'
+						}
+					}
+				]
+			});
+		});
+	</script>
 </body>
 
 </html>

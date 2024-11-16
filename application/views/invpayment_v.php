@@ -52,14 +52,7 @@
 					<h1 class="page-header col-md-12">
 						<button name="new" class="btn btn-info btn-lg" value="OK" style=" float:right;margin:2px;">New</button>
 						<?php if (isset($_GET["inv_no"])) { ?>
-							<button type="button" onclick="
-    if (window.opener) {
-        window.opener.location.reload(); 
-        setTimeout(() => window.close(), 500); // Tunggu 500 ms sebelum menutup
-    } else {
-        alert('Tidak dapat menemukan halaman opener.');
-    }
-" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
+							<button type="button" onclick="tutup();" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
 								Back
 							</button>
 						<?php } ?>
@@ -289,7 +282,7 @@
 																$customer_id = "";
 															} ?>
 															<?php $url = base_url("invpaymentproduct?invpayment_no=" . $invpayment->invpayment_no . "&inv_no=" . $inv_no . "&customer_id=" . $customer_id . "&project_id=" . $_GET["project_id"] . "&methodpayment_id=" . $invpayment->methodpayment_id) . $tagihan; ?>
-															<button onclick="bukaproduk('<?= $url; ?>')" data-toggle="tooltip" title="List Payment"  href="#" class="btn btn-sm btn-info" style="margin:0px;">
+															<button onclick="bukaproduk('<?= $url; ?>')" data-toggle="tooltip" title="List Payment" href="#" class="btn btn-sm btn-info" style="margin:0px;">
 																<span class="fa fa-shopping-bag" style="color:white;"></span>
 															</button>
 														</form>
@@ -298,7 +291,7 @@
 																<span class="fa fa-truck" data-fa-transform="flip-v" style="color:green;transform: scaleX(-1);"></span> </a>
 														</form>
 														<form method="POST" class="col-md-2" style="padding:0px;">
-															<a onclick="bukaproduk('<?= base_url("invcost?invpayment_no=" . $invpayment->invpayment_no . "&inv_no=" . $inv_no . "&customer_id=" . $customer_id . "&project_id=" . $_GET["project_id"] . $tagihan); ?>')" data-toggle="tooltip" title="Cost"  class="btn btn-sm btn-info" style="margin:0px;">
+															<a onclick="bukaproduk('<?= base_url("invcost?invpayment_no=" . $invpayment->invpayment_no . "&inv_no=" . $inv_no . "&customer_id=" . $customer_id . "&project_id=" . $_GET["project_id"] . $tagihan); ?>')" data-toggle="tooltip" title="Cost" class="btn btn-sm btn-info" style="margin:0px;">
 																<span class="fa fa-dollar" style="color:white;"></span> </a>
 														</form>
 														<form method="post" class="col-md-2" style="padding:0px;">

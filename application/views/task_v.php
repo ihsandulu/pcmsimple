@@ -31,69 +31,15 @@
 			padding: 3px 0px 3px 0px;
 		}
 
-
-		.tarik {
+		#pemisah {
+			border-top: gray double 3px;
+			margin-top: 20px;
+			padding: 20px;
 			overflow-x: auto;
-			/* Mengaktifkan scroll horizontal */
-			cursor: grab;
-			/* Gambar tangan ketika hover */
-			white-space: nowrap;
-		}
-
-		.tarik:active {
-			cursor: grabbing;
-			/* Gambar tangan saat diklik */
-		}
-
-		@media (max-width: 768px) {
-			.tarik {
-				overflow-x: auto;
-				/* Mengaktifkan scroll horizontal */
-				cursor: grab;
-				/* Gambar tangan ketika hover */
-				white-space: nowrap;
-			}
-
-			.tarik:active {
-				cursor: grabbing;
-				/* Gambar tangan saat diklik */
-			}
 		}
 	</style>
 
-	<script>
-		$(document).ready(function() {
-			const container = document.querySelector('.tarik');
-			let isDown = false;
-			let startX;
-			let scrollLeft;
 
-			container.addEventListener('mousedown', (e) => {
-				isDown = true;
-				container.classList.add('active');
-				startX = e.pageX - container.offsetLeft;
-				scrollLeft = container.scrollLeft;
-			});
-
-			container.addEventListener('mouseleave', () => {
-				isDown = false;
-				container.classList.remove('active');
-			});
-
-			container.addEventListener('mouseup', () => {
-				isDown = false;
-				container.classList.remove('active');
-			});
-
-			container.addEventListener('mousemove', (e) => {
-				if (!isDown) return;
-				e.preventDefault();
-				const x = e.pageX - container.offsetLeft;
-				const walk = (x - startX) * 3; // Sesuaikan kecepatan scroll
-				container.scrollLeft = scrollLeft - walk;
-			});
-		});
-	</script>
 
 
 </head>
@@ -246,6 +192,37 @@
 									</div> -->
 
 									<div class="form-group">
+										<label class="control-label col-sm-2" for="task_tips">Tips:</label>
+										<div class="col-sm-10">
+											<select onchange="tips();" id="task_tips" name="task_tips" class="form-control">
+												<option value="0" <?= ($task_tips == "0") ? "selected" : "" ?>>Tidak Ada</option>
+												<option value="1" <?= ($task_tips == "1") ? "selected" : "" ?>>Tanpa Keterangan</option>
+												<option value="2" <?= ($task_tips == "2") ? "selected" : "" ?>>Untuk Petugas</option>
+											</select>
+										</div>
+									</div>
+									<div id="tasktipsnominal" class="form-group" style="display:none;">
+										<label class="control-label col-sm-2" for="task_tipsnominal">Tips Nominal:</label>
+										<div class="col-sm-10">
+											<input <?= $disabled ?> class="form-control" type="number" name="task_tipsnominal" id="task_tipsnominal" value="<?= $task_tipsnominal ?>" />
+										</div>
+									</div>
+
+									<script>
+										function tips() {
+											let tipsnya = $("#task_tips").val();
+											if (tipsnya == "1" || tipsnya == "2") {
+												$("#tasktipsnominal").show();
+											} else {
+												$("#tasktipsnominal").hide();
+												$("#task_tipsnominal").val(0);
+											}
+										}
+										tips();
+									</script>
+
+
+									<div class="form-group">
 										<label class="control-label col-sm-2" for="task_content">Keterangan:</label>
 										<div class="col-sm-10">
 											<textarea <?= $readonly; ?> class="form-control" type="text" name="task_content" id="task_content"><?= $task_content; ?></textarea>
@@ -345,6 +322,177 @@
 									</div>
 								<?php } ?>
 								<?php
+
+								if ($this->session->userdata("position_id") != 6) { ?>
+									<?php if ($this->session->userdata("position_id") == 2) { ?>
+										<button onclick="bukadata();" class="btn btn-warning fa fa-bars" style="margin-left:20px;"> Buka Data</button>
+										<script>
+											function bukadata() {
+												$("#datatransaksi").toggle();
+											}
+											$(document).ready(function() {
+												$("#datatransaksi").hide();
+											});
+										</script>
+									<?php } ?>
+									<div id="datatransaksi" class="col-xs-12">
+										<div id="pemisah" class="tarik">
+											<table id="dataTable" class="table table-condensed table-hover">
+												<thead>
+													<tr>
+														<?php if (!isset($_GET['report'])) {
+															$col = "col-md-2";
+														} else {
+															$col = "col-md-1";
+														} ?>
+														<th class="<?= $col; ?>">Action</th>
+														<th>No.</th>
+														<?php if ($this->session->userdata("position_id") != 6) { ?>
+															<th>Date</th>
+															<th>Time</th>
+															<!-- <th>Due Date </th> -->
+														<?php } ?>
+														<th>Finished Date </th>
+														<?php if ($this->session->userdata("position_id") != 6) { ?>
+															<th>INV No.</th>
+														<?php } ?>
+														<th>Task No. </th>
+														<th>Customer</th>
+														<?php if ($this->session->userdata("position_id") != 6) { ?>
+															<th>Teknisi</th>
+														<?php } ?>
+														<th>Task</th>
+														<th>Status</th>
+														<th>Tips</th>
+														<th class="col-md-1">Proof </th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php
+													if (isset($_GET['inv_no'])) {
+														$this->db->where("inv_no", $_GET['inv_no']);
+													}
+
+													if ($this->session->userdata("position_id") == 2) {
+														$this->db->where("task.user_id", $this->session->userdata("user_id"));
+													}
+													if ($this->session->userdata("position_id") == 6) {
+														$this->db->where("task.customer_id", $this->session->userdata("customer_id"));
+													}
+													if (isset($_GET['user_id']) && $_GET['user_id'] != "") {
+														$this->db->where("task.user_id", $this->input->get("user_id"));
+													}
+													$usr = $this->db
+														->join("user", "user.user_id=task.user_id", "left")
+														->join("customer", "customer.customer_id=task.customer_id", "left")
+														->order_by("task_id", "desc")
+														->get("task");
+													// echo $this->db->last_query();
+													$no = 1;
+													$numrows = $usr->num_rows();
+													foreach ($usr->result() as $task) {
+														$warna = "background-color:#BAFFC9;";
+														$status = "Done";
+														if ($task->task_finished == "0000-00-00") {
+															$warna = "background-color:#ECD2C0;";
+															$status = "";
+														}
+														if ($task->user_id == 0) {
+															$warna = "background-color:#000000!important; color:white!important;";
+															$status = "";
+														}
+													?>
+														<tr style="<?= $warna; ?>">
+															<td style="text-align:center; ">
+																<?php if (!isset($_GET['report'])) {
+																	$float = "float:right;"; ?>
+																	<?php if ($this->session->userdata("position_id") != 2) { ?>
+																		<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
+																			<button data-toggle="tooltip" title="Delete" class="btn btn-sm btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+																			<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																		</form>
+
+																		<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
+																			<button data-toggle="tooltip" title="Edit" class="btn btn-sm btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
+																			<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																		</form>
+																	<?php } ?>
+
+																<?php } else {
+																	$float = "";
+																} ?>
+																<?php if ($this->session->userdata("position_id") != 2) { ?>
+																	<form method="POST" class="" style="padding:0px; margin:2px; <?= $float; ?>">
+																		<a data-toggle="tooltip" title="Print Surat Perintah Kerja" target="_blank" href="<?= site_url("taskprint?inv_no=" . $task->inv_no) . "&task_no=" . $task->task_no . "&customer_id=" . $task->customer_id; ?>" class="btn btn-sm btn-success " name="edit" value="OK">
+																			<span class="fa fa-print" style="color:white;"></span> </a>
+																	</form>
+																<?php } ?>
+																<form method="POST" class="" style="padding:0px; margin:2px; <?= $float; ?>">
+																	<?php $url = site_url("taskproduct?inv_no=" . $task->inv_no) . "&customer_id=" . $task->customer_id . "&task_id=" . $task->task_id; ?>
+																	<a onclick="bukaproduk('<?= $url; ?>');return false;" data-toggle="tooltip" title="Material / Product" target="_blank" href="#" class="btn btn-sm btn-primary ">
+																		<span class="fa fa-shopping-bag" style="color:white;"></span> </a>
+																</form>
+															</td>
+															<td><?= $no++; ?></td>
+															<?php if ($this->session->userdata("position_id") != 6) { ?>
+																<td><?= $task->task_date; ?></td>
+																<td><?= $task->task_time; ?></td>
+																<!-- <td><?= ($task->task_due == "0000-00-00") ? "" : $task->task_due; ?></td> -->
+															<?php } ?>
+															<td>
+																<?= ($task->task_finished == "0000-00-00") ? "" : $task->task_done; ?>&nbsp;
+																<?php if ($task->task_geolocation != "") { ?>
+																	<a target="_blank" href="https://www.google.com/maps/?q=<?= $task->task_geolocation; ?>">
+																		<span class="fa fa-map-marker"></span>
+																	</a>
+																<?php } ?>
+															</td>
+															<?php if ($this->session->userdata("position_id") != 6) { ?>
+																<td><?= $task->inv_no; ?></td>
+															<?php } ?>
+															<td><?= $task->task_no; ?></td>
+															<td><?= $task->customer_name; ?></td>
+															<?php if ($this->session->userdata("position_id") != 6) { ?>
+																<td><?= $task->user_name; ?></td>
+															<?php } ?>
+															<td><?= $task->task_content; ?></td>
+															<td><?= $status; ?></td>
+															<td>
+																<?= ($task->task_tips == "1") ? "Tanpa Keterangan" : "" ?>
+																<?= ($task->task_tips == "2") ? "Untuk Petugas" : "" ?>
+																<br/>
+																(<?php
+																if ($task->task_tips > 0) {
+																	if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
+																		echo "";
+																	} else {
+																		echo number_format($task->task_tipsnominal, 0, ",", ".");
+																	}
+																} ?>)
+															</td>
+															<td><?php if ($task->task_picture != "") {
+																	$gambar = $task->task_picture;
+																} else {
+																	$gambar = "noimage.png";
+																} ?>
+																<img src="<?= base_url("assets/images/task_picture/" . $gambar); ?>" alt="approve" style="width:20px; height:20px; margin-right:10px;" onClick="tampil(this)">
+																<script>
+																	function tampil(a) {
+																		var gambar = $(a).attr("src");
+																		$("#imgumum").attr("src", gambar);
+																		$("#myImage").modal("show");
+																	}
+																</script>
+																<a href="<?= base_url("assets/images/task_picture/" . $gambar); ?>" target="_blank" class="fa fa-download"></a>
+															</td>
+														</tr>
+													<?php } ?>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								<?php } ?>
+								<?php
 								if ($this->session->userdata("position_id") == 2 || $this->session->userdata("position_id") == 6) {
 									if (isset($_GET['inv_no'])) {
 										$this->db->where("inv_no", $_GET['inv_no']);
@@ -367,6 +515,7 @@
 										->get("task");
 									//echo $this->db->last_query();
 									$no = 1;
+									$bantuan = array("", "Ya (Potongan 50%)");
 									foreach ($usr->result() as $task) {
 										$warna = "background-color:#9ADED4;";
 										$status = "Done";
@@ -379,8 +528,13 @@
 											$status = "Accepted";
 										}
 										if ($task->task_finished > "0000-00-00") {
-											$warna = "background-color:#9ADED4;";
-											$status = "";
+											if ($task->task_komplain != "") {
+												$warna = "background-color:#F7C2D6;";
+												$status = "Komplain";
+											} else {
+												$warna = "background-color:#9ADED4;";
+												$status = "Done";
+											}
 										}
 								?>
 										<div class="col-md-4 col-xs-12" style="">
@@ -505,9 +659,14 @@
 														<div class="col-xs-8">: <?= $task->task_content; ?>&nbsp;</div>
 													</div>
 
-													<?php if ($task->task_finished > "0000-00-00" || $task->task_arrive > "0000-00-00") { ?> <div class="col-xs-12 detail" style="">
+													<?php if ($task->task_finished > "0000-00-00" || $task->task_arrive > "0000-00-00") { ?>
+														<div class="col-xs-12 detail" style="">
 															<div class="col-xs-4 bold">Status</div>
 															<div class="col-xs-8">: <?= $status; ?>&nbsp;</div>
+														</div>
+														<div class="col-xs-12 detail" style="">
+															<div class="col-xs-4 bold">Bantuan Pusat</div>
+															<div class="col-xs-8">: <?= $bantuan[$task->task_bantuan]; ?>&nbsp;</div>
 														</div>
 													<?php } ?>
 													<?php if ($task->task_finished > "0000-00-00") { ?>
@@ -523,6 +682,32 @@
 														</div>
 													<?php } ?>
 													<?php if ($task->task_arrive > "0000-00-00") { ?>
+														<div class="col-xs-12 detail" style="">
+															<div class="col-xs-4 bold">Tips</div>
+															<div class="col-xs-8">:
+																<?php
+																if ($task->task_tips > 0) {
+																	if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
+																		echo "";
+																	} else {
+																		echo number_format($task->task_tipsnominal, 0, ",", ".");
+																	}
+																} ?>
+																&nbsp;
+															</div>
+														</div>
+														<?php if( $status=="Done"){?>
+														<div class="col-xs-12" style="">
+															<form action="" method="POST" enctype="multipart/form-data">
+																<div class="form-group">
+																	<label for="email">Komplain:</label>
+																	<input type="text" class="form-control" name="task_komplain" value="<?= $task->task_komplain; ?>">
+																</div>
+																<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																<button name="change" value="OK" type="submit" class="btn btn-success">Komplain</button>
+															</form>
+														</div>
+														<?php }?>
 														<div class="col-xs-12" style="">
 															<form action="" method="POST" enctype="multipart/form-data">
 																<div class="form-group">
@@ -531,160 +716,32 @@
 																</div>
 																<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
 																<button name="change" value="OK" type="submit" class="btn btn-success">DONE</button>
+																<?php if ($task->task_bantuan == 0) { ?>
+																	<button onclick="klik('bantuan');" type="button" class="btn btn-warning">Butuh Bantuan</button>
+																<?php } ?>
 															</form>
 														</div>
+														<div class="col-xs-12" style="display:none;">
+															<form action="" method="POST" enctype="multipart/form-data">
+																<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																<input type="hidden" name="task_bantuan" value="1" />
+																<button id="bantuan" name="change" value="OK" type="submit" class="btn btn-success">Bantuan</button>
+															</form>
+														</div>
+														<script>
+															function klik(a) {
+																if (confirm("Anda Yakin Meminta Bantuan?")) {
+																	$("#" + a).click();
+																}
+															}
+														</script>
 													<?php } ?>
 												</div>
 											</div>
 										</div>
-									<?php }
+								<?php }
 								}
-
-								if ($this->session->userdata("position_id") != 6) { ?>
-									<div class="col-xs-12">
-										<div class="tarik">
-											<table id="dataTable" class="table table-condensed table-hover">
-												<thead>
-													<tr>
-														<?php if (!isset($_GET['report'])) {
-															$col = "col-md-2";
-														} else {
-															$col = "col-md-1";
-														} ?>
-														<th class="<?= $col; ?>">Action</th>
-														<th>No.</th>
-														<?php if ($this->session->userdata("position_id") != 6) { ?>
-															<th>Date</th>
-															<th>Time</th>
-															<!-- <th>Due Date </th> -->
-														<?php } ?>
-														<th>Finished Date </th>
-														<?php if ($this->session->userdata("position_id") != 6) { ?>
-															<th>INV No.</th>
-														<?php } ?>
-														<th>Task No. </th>
-														<th>Customer</th>
-														<?php if ($this->session->userdata("position_id") != 6) { ?>
-															<th>Teknisi</th>
-														<?php } ?>
-														<th>Task</th>
-														<th>Status</th>
-														<th class="col-md-1">Proof </th>
-
-													</tr>
-												</thead>
-												<tbody>
-													<?php
-													if (isset($_GET['inv_no'])) {
-														$this->db->where("inv_no", $_GET['inv_no']);
-													}
-
-													if ($this->session->userdata("position_id") == 2) {
-														$this->db->where("task.user_id", $this->session->userdata("user_id"));
-													}
-													if ($this->session->userdata("position_id") == 6) {
-														$this->db->where("task.customer_id", $this->session->userdata("customer_id"));
-													}
-													if (isset($_GET['user_id']) && $_GET['user_id'] != "") {
-														$this->db->where("task.user_id", $this->input->get("user_id"));
-													}
-													$usr = $this->db
-														->join("user", "user.user_id=task.user_id", "left")
-														->join("customer", "customer.customer_id=task.customer_id", "left")
-														->order_by("task_id", "desc")
-														->get("task");
-													// echo $this->db->last_query();
-													$no = 1;
-													$numrows = $usr->num_rows();
-													foreach ($usr->result() as $task) {
-														$warna = "background-color:#BAFFC9;";
-														$status = "Done";
-														if ($task->task_finished == "0000-00-00") {
-															$warna = "background-color:#ECD2C0;";
-															$status = "";
-														}
-														if ($task->user_id == 0) {
-															$warna = "background-color:#000000!important; color:white!important;";
-															$status = "";
-														}
-													?>
-														<tr style="<?= $warna; ?>">
-															<td style="text-align:center; ">
-																<?php if (!isset($_GET['report'])) {
-																	$float = "float:right;"; ?>
-																	<?php if ($this->session->userdata("position_id") != 2) { ?>
-																		<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
-																			<button data-toggle="tooltip" title="Delete" class="btn btn-sm btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-																			<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
-																		</form>
-																	<?php } ?>
-
-																	<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
-																		<button data-toggle="tooltip" title="Edit" class="btn btn-sm btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-																		<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
-																	</form>
-
-																<?php } else {
-																	$float = "";
-																} ?>
-																<?php if ($this->session->userdata("position_id") != 2) { ?>
-																	<form method="POST" class="" style="padding:0px; margin:2px; <?= $float; ?>">
-																		<a data-toggle="tooltip" title="Print Surat Perintah Kerja" target="_blank" href="<?= site_url("taskprint?inv_no=" . $task->inv_no) . "&task_no=" . $task->task_no . "&customer_id=" . $task->customer_id; ?>" class="btn btn-sm btn-success " name="edit" value="OK">
-																			<span class="fa fa-print" style="color:white;"></span> </a>
-																	</form>
-																<?php } ?>
-																<form method="POST" class="" style="padding:0px; margin:2px; <?= $float; ?>">
-																	<?php $url = site_url("taskproduct?inv_no=" . $task->inv_no) . "&customer_id=" . $task->customer_id . "&task_id=" . $task->task_id; ?>
-																	<a onclick="bukaproduk('<?= $url; ?>');return false;" data-toggle="tooltip" title="Material / Product" target="_blank" href="#" class="btn btn-sm btn-primary ">
-																		<span class="fa fa-shopping-bag" style="color:white;"></span> </a>
-																</form>
-															</td>
-															<td><?= $no++; ?></td>
-															<?php if ($this->session->userdata("position_id") != 6) { ?>
-																<td><?= $task->task_date; ?></td>
-																<td><?= $task->task_time; ?></td>
-																<!-- <td><?= ($task->task_due == "0000-00-00") ? "" : $task->task_due; ?></td> -->
-															<?php } ?>
-															<td>
-																<?= ($task->task_finished == "0000-00-00") ? "" : $task->task_done; ?>&nbsp;
-																<?php if ($task->task_geolocation != "") { ?>
-																	<a target="_blank" href="https://www.google.com/maps/?q=<?= $task->task_geolocation; ?>">
-																		<span class="fa fa-map-marker"></span>
-																	</a>
-																<?php } ?>
-															</td>
-															<?php if ($this->session->userdata("position_id") != 6) { ?>
-																<td><?= $task->inv_no; ?></td>
-															<?php } ?>
-															<td><?= $task->task_no; ?></td>
-															<td><?= $task->customer_name; ?></td>
-															<?php if ($this->session->userdata("position_id") != 6) { ?>
-																<td><?= $task->user_name; ?></td>
-															<?php } ?>
-															<td><?= $task->task_content; ?></td>
-															<td><?= $status; ?></td>
-															<td><?php if ($task->task_picture != "") {
-																	$gambar = $task->task_picture;
-																} else {
-																	$gambar = "noimage.png";
-																} ?>
-																<img src="<?= base_url("assets/images/task_picture/" . $gambar); ?>" alt="approve" style="width:20px; height:20px; margin-right:10px;" onClick="tampil(this)">
-																<script>
-																	function tampil(a) {
-																		var gambar = $(a).attr("src");
-																		$("#imgumum").attr("src", gambar);
-																		$("#myImage").modal("show");
-																	}
-																</script>
-																<a href="<?= base_url("assets/images/task_picture/" . $gambar); ?>" target="_blank" class="fa fa-download"></a>
-															</td>
-														</tr>
-													<?php } ?>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								<?php } ?>
+								?>
 							</div>
 					</div>
 				<?php } ?>
@@ -708,39 +765,7 @@
 	<!-- /#wrap -->
 	<?php require_once("footer.php"); ?>
 
-	<script>
-		const scrollableTable = document.querySelector('.scrollable-table');
 
-		let isDown = false;
-		let startX;
-		let scrollLeft;
-
-		scrollableTable.addEventListener('mousedown', (e) => {
-			isDown = true;
-			scrollableTable.classList.add('active');
-			startX = e.pageX - scrollableTable.offsetLeft;
-			scrollLeft = scrollableTable.scrollLeft;
-			scrollableTable.style.cursor = 'grabbing';
-		});
-
-		scrollableTable.addEventListener('mouseleave', () => {
-			isDown = false;
-			scrollableTable.style.cursor = 'grab';
-		});
-
-		scrollableTable.addEventListener('mouseup', () => {
-			isDown = false;
-			scrollableTable.style.cursor = 'grab';
-		});
-
-		scrollableTable.addEventListener('mousemove', (e) => {
-			if (!isDown) return;
-			e.preventDefault();
-			const x = e.pageX - scrollableTable.offsetLeft;
-			const walk = (x - startX) * 2; // kecepatan scroll
-			scrollableTable.scrollLeft = scrollLeft - walk;
-		});
-	</script>
 </body>
 
 </html>

@@ -75,7 +75,7 @@ class methodpayment_M extends CI_Model {
 		->get("methodpayment");
 		if($sjno->num_rows()>0){
 		$methodpayment_id=$sjno->row()->methodpayment_id;
-		$methodpayment_id="SJK".str_pad(substr($methodpayment_id,3)+1,5,"0",STR_PAD_LEFT);
+		$methodpayment_id = "SJK" . str_pad((int)substr($methodpayment_id, 3) + 1, 5, "0", STR_PAD_LEFT);
 		}else{
 		$methodpayment_id="SJK00001";
 		}

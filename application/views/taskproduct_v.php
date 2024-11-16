@@ -22,7 +22,7 @@
 			<div class="col-md-8">
 				<h1 class="page-header"> Product Invoice No. <?= $this->input->get("inv_no"); ?></h1>
 			</div>
-			<?php if (!isset($_POST['new']) && !isset($_POST['edit'])) { ?>
+			<?php if (!isset($_POST['new']) && !isset($_POST['edit']) && $this->session->userdata("position_id") != 2) { ?>
 				<form method="post" class="col-md-4">
 					<h1 class="page-header col-md-12">
 						<button name="new" class="btn btn-info btn-lg" value="OK" style=" float:right;margin:2px;">New</button>
@@ -204,11 +204,13 @@
 								</div>
 							<?php } ?>
 							<div class="box">
-							<div id="collapse4" class=" tarik">
-								<table id="" class="table table-condensed table-hover">
+								<div id="collapse4" class=" tarik">
+									<table id="" class="table table-condensed table-hover">
 										<thead>
 											<tr>
-											<th class="col-md-2">Action</th>
+												<?php if ($this->session->userdata("position_id") != 2) { ?>
+													<th class="col-md-2">Action</th>
+												<?php } ?>
 												<th>No.</th>
 												<th>Product</th>
 												<th>Qty</th>
@@ -230,28 +232,30 @@
 											$no = 1;
 											foreach ($usr->result() as $invproduct) { ?>
 												<tr>
-													<td style="padding-left:0px; padding-right:0px;">
-														<?php if ($identity->identity_stok == 1) { ?>
-															<form method="post" action="<?= site_url("invproduct?inv_no=" . $invproduct->inv_no . "&customer_id=" . $this->input->get("customer_id") . "&bap=OK&bap_remarks=Reject Product Invoice " . $invproduct->inv_no); ?>" method="post" method="post" class="col-md-3" style="padding:0px;">
-																<button name="edit" class="btn btn-danger" title="Berita Acara Pemusnahan" data-toggle="tooltip" value="OK"><span class="fa fa-trash" style="color:white;"></span> </button>
+													<?php if ($this->session->userdata("position_id") != 2) { ?>
+														<td style="padding-left:0px; padding-right:0px;">
+															<?php if ($identity->identity_stok == 1) { ?>
+																<form method="post" action="<?= site_url("invproduct?inv_no=" . $invproduct->inv_no . "&customer_id=" . $this->input->get("customer_id") . "&bap=OK&bap_remarks=Reject Product Invoice " . $invproduct->inv_no); ?>" method="post" method="post" class="col-md-3" style="padding:0px;">
+																	<button name="edit" class="btn btn-danger" title="Berita Acara Pemusnahan" data-toggle="tooltip" value="OK"><span class="fa fa-trash" style="color:white;"></span> </button>
+																	<input type="hidden" name="invproduct_id" value="<?= $invproduct->invproduct_id; ?>" />
+																</form>
+																<form method="post" target="_blank" action="<?= site_url("gudang?daurulang=OK&gudang_qty=" . $invproduct->invproduct_qty . "&gudang_inout=in&gudang_keterangan=Pengembalian Invoice " . $invproduct->inv_no . "&table=invproduct&id=" . $invproduct->invproduct_id); ?>" method="post" method="post" class="col-md-3" style="padding:0px;">
+																	<button name="new" class="btn btn-info" title="Daur Ulang (New Product)/ Return Product" data-toggle="tooltip" value="OK"><span class="fa fa-cogs" style="color:white;"></span> </button>
+																	<input type="hidden" name="gudang_id" />
+																</form>
+															<?php } ?>
+															<form method="post" class="col-md-3" style="padding:0px;">
+																<button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
 																<input type="hidden" name="invproduct_id" value="<?= $invproduct->invproduct_id; ?>" />
 															</form>
-															<form method="post" target="_blank" action="<?= site_url("gudang?daurulang=OK&gudang_qty=" . $invproduct->invproduct_qty . "&gudang_inout=in&gudang_keterangan=Pengembalian Invoice " . $invproduct->inv_no . "&table=invproduct&id=" . $invproduct->invproduct_id); ?>" method="post" method="post" class="col-md-3" style="padding:0px;">
-																<button name="new" class="btn btn-info" title="Daur Ulang (New Product)/ Return Product" data-toggle="tooltip" value="OK"><span class="fa fa-cogs" style="color:white;"></span> </button>
-																<input type="hidden" name="gudang_id" />
-															</form>
-														<?php } ?>
-														<form method="post" class="col-md-3" style="padding:0px;">
-															<button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
-															<input type="hidden" name="invproduct_id" value="<?= $invproduct->invproduct_id; ?>" />
-														</form>
 
-														<form method="post" class="col-md-3" style="padding:0px;">
-															<button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
-															<input type="hidden" name="invproduct_id" value="<?= $invproduct->invproduct_id; ?>" />
-															<input type="hidden" name="gudang_id" value="<?= $invproduct->gudang_id; ?>" />
-														</form>
-													</td>
+															<form method="post" class="col-md-3" style="padding:0px;">
+																<button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+																<input type="hidden" name="invproduct_id" value="<?= $invproduct->invproduct_id; ?>" />
+																<input type="hidden" name="gudang_id" value="<?= $invproduct->gudang_id; ?>" />
+															</form>
+														</td>
+													<?php } ?>
 													<td><?= $no++; ?></td>
 													<td><?= $invproduct->product_name; ?></td>
 													<td><?= $invproduct->invproduct_qty; ?></td>

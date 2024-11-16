@@ -300,18 +300,18 @@
 								<div class="col-md-3 isiket"><label>Cash Sebelumnya :</label><label id="cashs"><?=number_format($scash,0,",",".");?></label></div>
 								<div class="col-md-3 isiket"><label>Cash Periode Ini :</label><label id="cashp"><?=number_format($cash,0,",",".");?></label></div>
 							</div>
-							<div class="col-md-12 ket">
+							<!-- <div class="col-md-12 ket">
 								<div class="col-md-12 judket">Project/Non Project</div>
 								<div class="col-md-3 isiket"><label>Project Debet :</label><label id="cprojectd"></label></div>
 								<div class="col-md-3 isiket"><label>Project Credit :</label><label id="cprojectk"></label></div>
 								<div class="col-md-3 isiket"><label>Non Project Debet :</label><label id="cnprojectd"></label></div>
 								<div class="col-md-3 isiket"><label>Non Project Credit :</label><label id="cnprojectk"></label></div>
-							</div>
-							<div class="col-md-12 ket">
+							</div> -->
+							<!-- <div class="col-md-12 ket">
 								<div class="col-md-12 judket">Biaya Tetap/Tidak Tetap</div>
 								<div class="col-md-3 isiket"><label>Biaya Tetap :</label><label id="ctetap"></label></div>
 								<div class="col-md-3 isiket"><label>Biaya Tidak Tetap :</label><label id="cttetap"></label></div>
-							</div>
+							</div> -->
 							<div style="clear:both;"></div>
 							</div>
 							

@@ -118,17 +118,50 @@
 									</div>
 
 									<div class="form-group">
-										<label class="control-label col-sm-2" for=project_id">Project:</label>
+										<label class="control-label col-sm-2" for="bank_id">Bank:</label>
 										<div class="col-sm-10">
-											<select class="form-control" id="user_project" name="user_project">
+											<select class="form-control" id="bank_id" name="bank_id">
 												<option></option>
-												<?php $project = $this->db->get("project");
-												foreach ($project->result() as $project) { ?>
-													<option value="<?= $project->project_id; ?>" <?= $user_project == $project->project_id ? "selected" : ""; ?>><?= $project->project_name; ?></option>
+												<?php $branc = $this->db->get("bank");
+												foreach ($branc->result() as $bank) { ?>
+													<option value="<?= $bank->bank_id; ?>" <?= $bank_id == $bank->bank_id ? "selected" : ""; ?>><?= $bank->bank_name; ?></option>
 												<?php } ?>
 											</select>
 										</div>
 									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="user_norek">No Rek:</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="user_norek" name="user_norek" placeholder="Enter Number" value="<?= $user_norek; ?>">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="gajitype_id">Salary Period Type:</label>
+										<div class="col-sm-10">
+											<select class="form-control" id="gajitype_id" name="gajitype_id">
+												<option></option>
+												<?php $branc = $this->db->get("gajitype");
+												foreach ($branc->result() as $gajitype) { ?>
+													<option value="<?= $gajitype->gajitype_id; ?>" <?= $gajitype_id == $gajitype->gajitype_id ? "selected" : ""; ?>><?= $gajitype->gajitype_name; ?></option>
+												<?php } ?>
+											</select>
+										</div>
+									</div>
+									<?php if ($this->session->userdata("identity_project") == 1) { ?>
+										<div class="form-group">
+											<label class="control-label col-sm-2" for="project_id">Project:</label>
+											<div class="col-sm-10">
+												<select class="form-control" id="user_project" name="user_project">
+													<option></option>
+													<?php $project = $this->db->get("project");
+													foreach ($project->result() as $project) { ?>
+														<option value="<?= $project->project_id; ?>" <?= $user_project == $project->project_id ? "selected" : ""; ?>><?= $project->project_name; ?></option>
+													<?php } ?>
+												</select>
+											</div>
+										</div>
+									<?php } ?>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="position_id">Position:</label>
 										<div class="col-sm-10">
@@ -153,18 +186,20 @@
 											}
 										}
 									</script>
-									<div class="form-group" id="customer">
-										<label class="control-label col-sm-2" for="customer_id">Customer:</label>
-										<div class="col-sm-10">
-											<select class="form-control" id="customer_id" name="customer_id">
-												<option></option>
-												<?php $customer = $this->db->get("customer");
-												foreach ($customer->result() as $customer) { ?>
-													<option value="<?= $customer->customer_id; ?>" <?= $customer_id == $customer->customer_id ? "selected" : ""; ?>><?= $customer->customer_name; ?></option>
-												<?php } ?>
-											</select>
+									<?php if ($this->session->userdata("identity_project") == 1) { ?>
+										<div class="form-group" id="customer">
+											<label class="control-label col-sm-2" for="customer_id">Customer:</label>
+											<div class="col-sm-10">
+												<select class="form-control" id="customer_id" name="customer_id">
+													<option></option>
+													<?php $customer = $this->db->get("customer");
+													foreach ($customer->result() as $customer) { ?>
+														<option value="<?= $customer->customer_id; ?>" <?= $customer_id == $customer->customer_id ? "selected" : ""; ?>><?= $customer->customer_name; ?></option>
+													<?php } ?>
+												</select>
+											</div>
 										</div>
-									</div>
+									<?php } ?>
 									<div class="form-group" id="vendor">
 										<label class="control-label col-sm-2" for="vendor_id">Vendor:</label>
 										<div class="col-sm-10">
@@ -253,12 +288,16 @@
 											foreach ($usr->result() as $user) { ?>
 												<tr>
 													<td style="padding-left:0px; padding-right:0px;">
-														<form method="post" class="col-md-6" style="padding:0px;">
+														<form target="_blank" action="<?= base_url("tunjangan"); ?>" method="get" class="col-md-4" style="padding:0px;" onsubmit="openInNewWindow(event)">
+															<button class="btn btn-success "><span class="fa fa-money" style="color:white;"></span> </button>
+															<input type="hidden" name="user_id" value="<?= $user->userid; ?>" />
+															<input type="hidden" name="user_name" value="<?= $user->user_name; ?>" />
+														</form>
+														<form method="post" class="col-md-4" style="padding:0px;">
 															<button class="btn btn-warning " name="edit" value="OK"><span class="fa fa-edit" style="color:white;"></span> </button>
 															<input type="hidden" name="user_id" value="<?= $user->userid; ?>" />
 														</form>
-
-														<form method="post" class="col-md-6" style="padding:0px;">
+														<form method="post" class="col-md-4" style="padding:0px;">
 															<button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
 															<input type="hidden" name="user_id" value="<?= $user->userid; ?>" />
 														</form>

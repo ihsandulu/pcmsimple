@@ -26,16 +26,9 @@
 				<form method="post" class="col-md-4">
 					<h1 class="page-header col-md-12">
 						<button name="new" class="btn btn-info btn-lg" value="OK" style=" float:right;margin:2px;">New</button>
-						<button type="button" onclick="
-    if (window.opener) {
-        window.opener.location.reload(); 
-        setTimeout(() => window.close(), 500); // Tunggu 500 ms sebelum menutup
-    } else {
-        alert('Tidak dapat menemukan halaman opener.');
-    }
-" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
+						<button type="button" onclick="tutup();" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
 							Back
-						</button>
+						</button>						
 						<input type="hidden" name="invproduct_id" value="0" />
 					</h1>
 				</form>
@@ -209,7 +202,7 @@
 									<table id="dataTable" class="table table-condensed table-hover">
 										<thead>
 											<tr>
-											<th class="col-md-2">Action</th>
+												<th class="col-md-2">Action</th>
 												<th>No.</th>
 												<th>Product</th>
 												<th>Qty</th>

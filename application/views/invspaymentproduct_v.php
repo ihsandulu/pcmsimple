@@ -89,7 +89,7 @@
 								<label class="control-label col-sm-2" for="invspaymentproduct_qty">Qty:</label>
 								<div class="col-sm-10">
 									<?php if($invspaymentproduct_qty==0){$invspaymentproduct_qty=1;}?>
-								  <input type="text" min="1" autofocus class="form-control" id="invspaymentproduct_qty" name="invspaymentproduct_qty" placeholder="Enter Qty" value="<?=$invspaymentproduct_qty;?>">
+								  <input type="text" min="1" autofocus class="form-control" id="invspaymentproduct_qty" name="invspaymentproduct_qty" placeholder="Enter Qty" value="<?=($invspaymentproduct_qty>1)?$invspaymentproduct_qty:"1";?>">
 								</div>
 							  </div>
 							  

@@ -188,18 +188,15 @@
 										<tr>
 											<!--<td><?=$header->type_name;?></td>-->
 											<td><?=$header->header_name;?></td>
-											<td style="padding-left:0px; padding-right:0px;">
-											
+											<td style="padding-left:0px; padding-right:0px;">											
 												<form method="post" class="col-md-6" style="padding:0px;">
 													<button class="btn btn-warning" name="edit" value="OK"><span class="fa fa-edit"></span> </button>
 													<input type="hidden" name="header_id" value="<?=$header->header_id;?>"/>
-												</form>
-												
+												</form>												
 												<form method="post" class="col-md-6" style="padding:0px;">
 													<button class="btn btn-danger delete" name="delete" value="OK"><span class="fa fa-window-close" style=" color:white;"></span> </button>
 													<input type="hidden" name="header_id" value="<?=$header->header_id;?>"/>
-												</form>
-												
+												</form>												
 											</td>
 										</tr>
 										<?php }?>

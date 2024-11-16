@@ -119,11 +119,22 @@
 										</div>
 									</div>
 
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="inv_status">Status:</label>
+										<div class="col-sm-10">
+											<select id="inv_status" name="inv_status" class="form-control">
+												<option value="0" <?= ($inv_status == "0") ? "selected" : ""; ?>>Jadi</option>
+												<option value="1" <?= ($inv_status == "1") ? "selected" : ""; ?>>Tunda</option>
+												<option value="2" <?= ($inv_status == "2") ? "selected" : ""; ?>>Batal</option>
+											</select>
+										</div>
+									</div>
+
 									<?php
 									$identity_project = $this->db->get("identity")->row()->identity_project;
 									if ($identity_project != 1) { ?>
 										<div class="form-group">
-											<label class="control-label col-sm-2" for="customer_id">Customer:</label>
+											<label class="control-label col-sm-2" for="customer_id">Customer:<br /><a target="_blank" href="<?= base_url("customer"); ?>" class="btn btn-warning">New Customer</a></label>
 											<div class="col-sm-10">
 												<datalist id="customer">
 													<?php $uni = $this->db
@@ -439,6 +450,7 @@
 												<th>No.</th>
 												<th>Date</th>
 												<th>Branch</th>
+												<th>Status</th>
 												<th>Invoice No. </th>
 												<th>Customer</th>
 												<?php if ($identity->identity_project == "1") { ?>
@@ -526,11 +538,13 @@
 												} else {
 													$inv->inv_pph = 0;
 												}
+												$status = array("Jadi", "Tunda", "Batal");
 											?>
 												<tr>
 													<td><?= $no++; ?></td>
 													<td><?= $inv->inv_date; ?></td>
 													<td><?= $inv->branch_name; ?></td>
+													<td><?= $status[$inv->inv_status]; ?></td>
 													<td><?= $inv->inv_no; ?></td>
 													<td>
 														<?= ucwords($inv->customer_name); ?>
@@ -654,11 +668,13 @@
 															<?php } else {
 																$float = "";
 															} ?>
-															<form method="GET" class="" style="padding:0px; margin:2px; <?= $float; ?>">
-																<?php $url = base_url("task?customer_id=" . $inv->customer_id . "&inv_no=" . $inv->inv_no); ?>
-																<button type="button" data-toggle="tooltip" title="Assignment" href="#" onclick="bukaproduk('<?= $url; ?>');" class="btn btn-sm btn-info " name="task">
-																	<span class="fa fa-hand-lizard-o" style="color:white;"></span> </button>
-															</form>
+															<?php if ($inv->inv_status == 0) { ?>
+																<form method="GET" class="" style="padding:0px; margin:2px; <?= $float; ?>">
+																	<?php $url = base_url("task?customer_id=" . $inv->customer_id . "&inv_no=" . $inv->inv_no); ?>
+																	<button type="button" data-toggle="tooltip" title="Assignment" href="#" onclick="bukaproduk('<?= $url; ?>');" class="btn btn-sm btn-info " name="task">
+																		<span class="fa fa-hand-lizard-o" style="color:white;"></span> </button>
+																</form>
+															<?php } ?>
 															<!-- <form method="POST" class="" style="padding:0px; margin:2px; <?= $float; ?>">
 																<a data-toggle="tooltip" title="Print SPK" target="_blank" href="<?= site_url("invprint?printer=spk&inv_no=" . $inv->inv_no) . "&customer_id=" . $inv->customer_id; ?>" class="btn btn-sm btn-success " name="edit" value="OK">
 																	<span class="fa fa-user" style="color:white;"></span> </a>
@@ -670,14 +686,14 @@
 															<?php if (!isset($_GET['report']) && $identity->identity_simple != 1) { ?>
 																<?php $urlpayment = site_url("invpayment?inv_no=" . $inv->inv_no) . "&customer_id=" . $inv->customer_id . "&project_id=" . $inv->project_id . "&tagihan=" . $invoice; ?>
 																<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
-																	<a onclick="bukaproduk('<?= $urlpayment; ?>')" data-toggle="tooltip" title="Payment" href="#" class="btn btn-sm btn-primary " name="payment" value="OK">
-																		<span class="fa fa-money" style="color:white;"></span> </a>
+																	<button type="button" onclick="bukaproduk('<?= $urlpayment; ?>')" data-toggle="tooltip" title="Payment" href="#" class="btn btn-sm btn-primary " name="payment" value="OK">
+																		<span class="fa fa-money" style="color:white;"></span> </button>
 																</form>
 
 																<?php $urlproduk = site_url("invproduct?inv_no=" . $inv->inv_no) . "&customer_id=" . $inv->customer_id . "&project_id=" . $inv->project_id; ?>
 																<form method="POST" class="" style="padding:0px; margin:2px; float:right;">
-																	<a onclick="bukaproduk('<?= $urlproduk; ?>')" data-toggle="tooltip" title="List Product" href="#" class="btn btn-sm btn-info " name="edit" value="OK">
-																		<span class="fa fa-shopping-bag" style="color:white;"></span> </a>
+																	<button type="button" onclick="bukaproduk('<?= $urlproduk; ?>')" data-toggle="tooltip" title="List Product" href="#" class="btn btn-sm btn-info " name="edit" value="OK">
+																		<span class="fa fa-shopping-bag" style="color:white;"></span> </button>
 																</form>
 															<?php } ?>
 															<?php if ($identity->identity_simple == 1) { ?>
