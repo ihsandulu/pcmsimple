@@ -130,17 +130,22 @@ class gaji_M extends CI_Model
 			//echo $this->db->last_query();die;
 
 
-
-			$gajitype = $this->db->where("gajitype_id", $input["gajitype_id"])->get("gajitype");
-			foreach ($gajitype->result() as $gajitype) {
-				if ($gajitype->gajitype_description == "Month") {
-					$tanggal_awal = date("Y-m-01");
-					$tanggal_akhir = date("Y-m-t");
-				} else {
-					$tanggal_awal = date("Y-m-" . $gajitype->gajitype_awaldate, strtotime("first day of -1 month"));
-					$tanggal_akhir = date("Y-m-" . $gajitype->gajitype_akhirdate);
+			if ($this->input->post("gajitype_id") == -1) {
+				$tanggal_awal = $this->input->post("gaji_from");
+				$tanggal_akhir = $this->input->post("gaji_to");
+			} else {
+				$gajitype = $this->db->where("gajitype_id", $input["gajitype_id"])->get("gajitype");
+				foreach ($gajitype->result() as $gajitype) {
+					if ($gajitype->gajitype_description == "Month") {
+						$tanggal_awal = date("Y-m-01");
+						$tanggal_akhir = date("Y-m-t");
+					} else {
+						$tanggal_awal = date("Y-m-" . $gajitype->gajitype_awaldate, strtotime("first day of -1 month"));
+						$tanggal_akhir = date("Y-m-" . $gajitype->gajitype_akhirdate);
+					}
 				}
 			}
+			
 			if ($this->input->post("gaji_description") == "") {
 				$input["gaji_description"] = "Payroll " . $input["gaji_name"] . " Bulan:" . date("M") . " Periode" . $tanggal_awal . " s/d " . $tanggal_akhir;
 			}
@@ -173,6 +178,7 @@ class gaji_M extends CI_Model
 					} else {
 						$pengali = 1;
 					}
+					
 					$inv = $this->db
 						->select("SUM(invproduct_qty*invproduct_price)AS jml, task.task_bantuan")
 						->join("invproduct", "invproduct.inv_no=inv.inv_no", "left")
@@ -185,7 +191,7 @@ class gaji_M extends CI_Model
 					foreach ($inv->result() as $inv) {
 						$total = $inv->jml;
 						if ($inv->task_bantuan == 1) {
-							$tunjangan_nominal = $total * 50/100;
+							$tunjangan_nominal = $total * 50 / 100;
 						} else {
 							$tunjangan_nominal = $total * $pengali;
 						}

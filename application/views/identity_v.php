@@ -232,7 +232,7 @@
 												<option value="2" <?= ($identity_project == 2) ? "selected" : ""; ?>>Product Orientation</option>
 											</select>
 										</div>
-										<label class="control-label col-sm-12 keterangan">(Oriantasi aplikasi berdasarkan Project / Tanpa Project / Penjualan Produk)</label>
+										<label class="control-label col-sm-12 keterangan">(Orientasi aplikasi berdasarkan Project / Tanpa Project / Penjualan Produk)</label>
 									</div>
 
 

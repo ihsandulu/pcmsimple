@@ -83,12 +83,38 @@
 										<label class="control-label col-sm-2" for="gajitype_id ">Period:</label>
 										<div class="col-sm-10">
 											<select onchange="pilihtype();" class="form-control" id="gajitype_id" name="gajitype_id">
-												<option value="0" <?= ($gajitype_id == "0") ? "selected" : ""; ?>>Select Type</option>
+											<option value="0" <?= ($gajitype_id == "0") ? "selected" : ""; ?>>Select Type</option>
+											<option value="-1" <?= ($gajitype_id == "-1") ? "selected" : ""; ?>>Current Periode</option>
 												<?php $gajitype = $this->db->order_by("gajitype_name", "ASC")->get("gajitype");
 												foreach ($gajitype->result() as $gajitype) { ?>
 													<option value="<?= $gajitype->gajitype_id; ?>" <?= ($gajitype_id == $gajitype->gajitype_id) ? "selected" : ""; ?>><?= $gajitype->gajitype_name; ?></option>
 												<?php } ?>
 											</select>
+											<script> 
+											function pilihtype(){
+												let gajitype = $("#gajitype_id").val();
+												if(gajitype==-1){
+													$(".periode").show();
+												}else{
+													$(".periode").hide();
+												}
+											}
+											$(document).ready(function(){
+												pilihtype();
+											});											
+											</script>
+										</div>
+									</div>
+									<div class="form-group periode">
+										<label class="control-label col-sm-2" for="gaji_from">From:</label>
+										<div class="col-sm-10">
+											<input type="date" class="form-control date" name="gaji_from" value="<?= $gaji_from; ?>" />
+										</div>
+									</div>
+									<div class="form-group periode">
+										<label class="control-label col-sm-2" for="gaji_to">To:</label>
+										<div class="col-sm-10">
+											<input type="date" class="form-control date" name="gaji_to" value="<?= $gaji_to; ?>" />
 										</div>
 									</div>
 									<hr />
