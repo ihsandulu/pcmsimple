@@ -570,17 +570,24 @@ $angka = 1530093;
 		padding: 10px;
 	}
 
-	.tarik {
-		overflow: hidden;
-		/* Hindari munculnya scrollbar */
-		cursor: grab;
-		/* Gambar tangan ketika hover */
-	}
+
 
 	.tarik:active {
 		cursor: grabbing;
 		/* Gambar tangan saat mengklik */
 	}
+
+	.tarik {
+		overflow: auto;
+		white-space: nowrap;
+		cursor: grab;
+	}
+
+	.tarik * table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+
 
 	td {
 		transition: background-color 0.3s ease;

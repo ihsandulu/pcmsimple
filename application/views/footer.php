@@ -92,34 +92,33 @@
 </script>
 
 <script>
-	const tableContainer = document.querySelector('.tarik');
+    const scrollableTable = document.querySelector('.tarik');
 
-	let isDown = false;
-	let startX;
-	let scrollLeft;
+    let isDragging = false;
+    let startX, scrollLeft;
 
-	tableContainer.addEventListener('mousedown', (e) => {
-		isDown = true;
-		tableContainer.classList.add('active');
-		startX = e.pageX - tableContainer.offsetLeft;
-		scrollLeft = tableContainer.scrollLeft;
-	});
+    scrollableTable.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        scrollableTable.classList.add('dragging');
+        startX = e.pageX - scrollableTable.offsetLeft;
+        scrollLeft = scrollableTable.scrollLeft;
+    });
 
-	tableContainer.addEventListener('mouseleave', () => {
-		isDown = false;
-		tableContainer.classList.remove('active');
-	});
+    scrollableTable.addEventListener('mouseleave', () => {
+        isDragging = false;
+        scrollableTable.classList.remove('dragging');
+    });
 
-	tableContainer.addEventListener('mouseup', () => {
-		isDown = false;
-		tableContainer.classList.remove('active');
-	});
+    scrollableTable.addEventListener('mouseup', () => {
+        isDragging = false;
+        scrollableTable.classList.remove('dragging');
+    });
 
-	tableContainer.addEventListener('mousemove', (e) => {
-		if (!isDown) return;
-		e.preventDefault();
-		const x = e.pageX - tableContainer.offsetLeft;
-		const walk = (x - startX) * 2; // Nilai 2 bisa diatur untuk kecepatan scroll
-		tableContainer.scrollLeft = scrollLeft - walk;
-	});
+    scrollableTable.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - scrollableTable.offsetLeft;
+        const walk = (x - startX) * 2; // Adjust scrolling speed
+        scrollableTable.scrollLeft = scrollLeft - walk;
+    });
 </script>

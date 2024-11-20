@@ -37,6 +37,10 @@
 			padding: 20px;
 			overflow-x: auto;
 		}
+
+		#datatransaksi {
+			margin-top: 20px;
+		}
 	</style>
 
 
@@ -332,12 +336,45 @@
 											}
 											$(document).ready(function() {
 												$("#datatransaksi").hide();
+												<?php if (isset($_GET["from"])) { ?>
+													$("#datatransaksi").show();
+												<?php } ?>
 											});
 										</script>
 									<?php } ?>
 									<div id="datatransaksi" class="col-xs-12">
+										<div class="carikonten well">
+											<form class="form-inline cari">
+												<div class="form-group">
+													<label for="from">From</label>
+													<input name="from" type="date" class="form-control date" value="<?= (isset($_GET['from'])) ? $_GET['from'] : date("Y-m-d"); ?>" />
+												</div>
+												<div class="form-group cari">
+													<label for="to">To</label>
+													<input name="to" type="date" class="form-control date" value="<?= (isset($_GET['to'])) ? $_GET['to'] : date("Y-m-d"); ?>" />
+												</div>
+												<?php if (isset($_GET['report'])) { ?>
+													<input type="hidden" name="report" value="ok" />
+												<?php } ?>
+												<button name="search" class="btn btn-primary">
+													<i class="fa fa-search"></i>
+												</button>
+												<?php
+												if (isset($_GET['from'])) {
+													$from = $_GET['from'];
+												} else {
+													$from = date("Y-m-d");
+												}
+												if (isset($_GET['to'])) {
+													$to = $_GET['to'];
+												} else {
+													$to = date("Y-m-d");
+												}
+												?>
+											</form>
+										</div>
 										<div id="pemisah" class="tarik">
-											<table id="dataTable" class="table table-condensed table-hover">
+											<table id="dataTable2" class="table table-condensed table-hover">
 												<thead>
 													<tr>
 														<?php if (!isset($_GET['report'])) {
@@ -369,6 +406,9 @@
 												</thead>
 												<tbody>
 													<?php
+
+													$this->db->where("task.task_date >=", $from);
+													$this->db->where("task.task_date <=", $to);
 													if (isset($_GET['inv_no'])) {
 														$this->db->where("inv_no", $_GET['inv_no']);
 													}
@@ -460,15 +500,15 @@
 															<td>
 																<?= ($task->task_tips == "1") ? "Tanpa Keterangan" : "" ?>
 																<?= ($task->task_tips == "2") ? "Untuk Petugas" : "" ?>
-																<br/>
+																<br />
 																(<?php
-																if ($task->task_tips > 0) {
-																	if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
-																		echo "";
-																	} else {
-																		echo number_format($task->task_tipsnominal, 0, ",", ".");
-																	}
-																} ?>)
+																	if ($task->task_tips > 0) {
+																		if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
+																			echo "";
+																		} else {
+																			echo number_format($task->task_tipsnominal, 0, ",", ".");
+																		}
+																	} ?>)
 															</td>
 															<td><?php if ($task->task_picture != "") {
 																	$gambar = $task->task_picture;
@@ -696,18 +736,18 @@
 																&nbsp;
 															</div>
 														</div>
-														<?php if( $status=="Done"){?>
-														<div class="col-xs-12" style="">
-															<form action="" method="POST" enctype="multipart/form-data">
-																<div class="form-group">
-																	<label for="email">Komplain:</label>
-																	<input type="text" class="form-control" name="task_komplain" value="<?= $task->task_komplain; ?>">
-																</div>
-																<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
-																<button name="change" value="OK" type="submit" class="btn btn-success">Komplain</button>
-															</form>
-														</div>
-														<?php }?>
+														<?php if ($status == "Done") { ?>
+															<div class="col-xs-12" style="">
+																<form action="" method="POST" enctype="multipart/form-data">
+																	<div class="form-group">
+																		<label for="email">Komplain:</label>
+																		<input type="text" class="form-control" name="task_komplain" value="<?= $task->task_komplain; ?>">
+																	</div>
+																	<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																	<button name="change" value="OK" type="submit" class="btn btn-success">Komplain</button>
+																</form>
+															</div>
+														<?php } ?>
 														<div class="col-xs-12" style="">
 															<form action="" method="POST" enctype="multipart/form-data">
 																<div class="form-group">
