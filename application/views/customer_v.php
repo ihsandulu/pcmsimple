@@ -4,6 +4,20 @@
 <head>
 	<?php
 	require_once("meta.php"); ?>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+	<style>
+		#map {
+			height: 400px;
+			width: 100%;
+		}
+
+		input,
+		button {
+			margin: 5px 0;
+			width: 100%;
+			padding: 8px;
+		}
+	</style>
 </head>
 
 <body class="  ">
@@ -135,6 +149,109 @@
 										<div class="col-sm-10">
 											<input type="text" autofocus class="form-control" id="customer_address" name="customer_address" placeholder="Enter Address" value="<?= $customer_address; ?>">
 										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_maps">Maps:</label>
+										<div class="col-sm-10">
+											<input type="text" autofocus class="form-control" id="customer_maps" name="customer_maps" placeholder="Enter Address" value="<?= $customer_maps; ?>">
+										</div>
+										<button type="button" id="searchAddress">Cari Alamat</button>
+										<div id="map"></div>
+										<input type="text" name="customer_location" id="customer_location" readonly placeholder="Koordinat (latitude, longitude)" value="<?= $customer_location; ?>"/>
+
+										<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+										<script>
+											$(document).ready(function() {
+												$('input[name="customer_maps"]').on('keydown', function(e) {
+													if (e.key === "Enter") {
+														e.preventDefault(); // Mencegah aksi default (submit)
+														$("#searchAddress").click();
+													}
+												});
+
+												function reverseGeocode(lat, lon) {
+													const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+													$.getJSON(url, function(data) {
+														if (data && data.address) {
+															const address = [
+																data.address.road || '',
+																data.address.city || '',
+																data.address.state || '',
+																data.address.postcode || '',
+																data.address.country || ''
+															].filter(Boolean).join(', ');
+															$('#customer_maps').val(address); // Isi input alamat
+														} else {
+															$('#customer_maps').val('Alamat tidak ditemukan');
+														}
+													}).fail(function() {
+														$('#customer_maps').val('Gagal mendapatkan alamat');
+													});
+												}
+
+												// Inisialisasi peta
+												<?php
+												if($customer_location==""){$location="-6.200000, 106.816666";}else{$location=$customer_location;}?>
+												const map = L.map('map').setView([<?=$location;?>], 10); // Jakarta
+
+												// Tambahkan tile dari OpenStreetMap
+												L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+													maxZoom: 19,
+													attribution: '© OpenStreetMap contributors'
+												}).addTo(map);
+
+												// Marker
+												const marker = L.marker([<?=$location;?>], {
+													draggable: true
+												}).addTo(map);
+
+												// Fungsi untuk memperbarui input koordinat
+												function updateLocationInput(lat, lng) {
+													$('#customer_location').val(`${lat}, ${lng}`);
+												}
+
+												// Listener untuk drag marker
+												marker.on('dragend', function(event) {
+													const position = event.target.getLatLng();
+													updateLocationInput(position.lat, position.lng);
+													reverseGeocode(position.lat, position.lng); // Dapatkan alamat dari koordinat
+												});
+
+												// Listener untuk klik di peta
+												map.on('click', function(event) {
+													const {
+														lat,
+														lng
+													} = event.latlng;
+													marker.setLatLng([lat, lng]);
+													updateLocationInput(lat, lng);
+													reverseGeocode(lat, lng); // Dapatkan alamat dari koordinat
+												});
+
+												// Geocoding menggunakan Nominatim API
+												$('#searchAddress').on('click', function() {
+													const address = $('#customer_maps').val();
+													const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+													$.getJSON(url, function(data) {
+														if (data && data.length > 0) {
+															const {
+																lat,
+																lon
+															} = data[0];
+															map.setView([lat, lon], 15); // Pusatkan peta ke lokasi
+															marker.setLatLng([lat, lon]); // Pindahkan marker
+															updateLocationInput(lat, lon);
+															reverseGeocode(lat, lon); // Perbarui alamat
+														} else {
+															alert('Alamat tidak ditemukan!');
+														}
+													}).fail(function() {
+														alert('Terjadi kesalahan saat menghubungi server.');
+													});
+												});
+											});
+										</script>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_phone">Phone:</label>

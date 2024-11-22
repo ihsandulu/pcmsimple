@@ -688,7 +688,9 @@
 
 													<div class="col-xs-12 detail" style="">
 														<div class="col-xs-4 bold">Customer</div>
-														<div class="col-xs-8">: <?= $task->customer_name; ?></div>
+														<div class="col-xs-8">: <?= $task->customer_name; ?><br />
+															<a id="googleMapsLink" href="https://www.google.com/maps?q=<?= $task->customer_location; ?>" target="_blank">Buka di Google Maps</a>
+														</div>
 													</div>
 													<div class="col-xs-12 detail" style="">
 														<div class="col-xs-4 bold">Petugas</div>
