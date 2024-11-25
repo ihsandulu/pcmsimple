@@ -188,12 +188,14 @@
 									$invoice = 0;
 									$pembayaran = 0;
 									foreach ($usr->result() as $inv) {
+										$diskon=$inv->inv_diskon;
 										$i = $this->db
 											->where("inv_no", $inv->inv_no)
 											->get("invproduct");
 										foreach ($i->result() as $i) {
 											$invoice += ($i->invproduct_qty * $i->invproduct_price);
 										}
+										$invoice-=$diskon;
 										$p = $this->db
 											->join("invpayment", "invpaymentproduct.invpayment_no=invpayment.invpayment_no", "left")
 											->where("inv_no", $inv->inv_no)
