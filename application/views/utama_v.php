@@ -188,7 +188,7 @@
 									$invoice = 0;
 									$pembayaran = 0;
 									foreach ($usr->result() as $inv) {
-										$diskon=$inv->inv_diskon;
+										$diskon=$inv->inv_discount;
 										$i = $this->db
 											->where("inv_no", $inv->inv_no)
 											->get("invproduct");
