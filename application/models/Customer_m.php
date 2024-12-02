@@ -138,6 +138,15 @@ class customer_M extends CI_Model
 					$input[$e] = $this->input->post($e);
 				}
 			}
+			$customerwa = $input["customer_wa"];
+			if(substr($customerwa,0,2)!="62"){
+				if(substr($customerwa,0,1)=="+"){
+					$customerwa = substr($customerwa,1);
+				}else{
+					$customerwa = "62".substr($customerwa,2);
+				}
+			}
+			$input["customer_wa"] =  $customerwa;
 			$input["customer_date"] = date("Y-m-d");
 			$this->db->insert("customer", $input);
 			$data["message"] = "Insert Data Success";
@@ -151,6 +160,15 @@ class customer_M extends CI_Model
 					$input[$e] = $this->input->post($e);
 				}
 			}
+			$customerwa = $input["customer_wa"];
+			if(substr($customerwa,0,2)!="62"){
+				if(substr($customerwa,0,1)=="+"){
+					$customerwa = substr($customerwa,1);
+				}else{
+					$customerwa = "62".substr($customerwa,2);
+				}
+			}
+			$input["customer_wa"] =  $customerwa;
 			$input["customer_name"] = htmlentities($input["customer_name"], ENT_QUOTES);
 			$this->db->update("customer", $input, array("customer_id" => $this->input->post("customer_id")));
 			$data["message"] = "Update Success";

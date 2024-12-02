@@ -60,6 +60,9 @@ $identity=$this->db->get("identity")->row();?>
 			<?php if(isset($inv_date)){?>
 			<div class="col-md-12 col-sm-12 col-xs-12">Date : <?=date("d M Y",strtotime($inv_date));?></div>
 			<?php }?>
+			<?php if(isset($inv_duedate)){?>
+			<div class="col-md-12 col-sm-12 col-xs-12">Due Date : <?=date("d M Y",strtotime($inv_duedate));?></div>
+			<?php }?>
 			<?php if(isset($orderno)){?>
 			<div class="col-md-12 col-sm-12 col-xs-12">Order No : <?=$orderno;?>&nbsp;</div>
 			<?php }?>

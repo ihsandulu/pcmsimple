@@ -491,7 +491,7 @@
 																<td><?= $task->inv_no; ?></td>
 															<?php } ?>
 															<td><?= $task->task_no; ?></td>
-															<td><?= $task->customer_name; ?></td>
+															<td><?= $task->customer_name; ?> <?= $task->customer_wa; ?> <?= $task->customer_phone; ?></td>
 															<?php if ($this->session->userdata("position_id") != 6) { ?>
 																<td><?= $task->user_name; ?></td>
 															<?php } ?>
@@ -690,6 +690,16 @@
 														<div class="col-xs-4 bold">Customer</div>
 														<div class="col-xs-8">: <?= $task->customer_name; ?><br />
 															<a id="googleMapsLink" href="https://www.google.com/maps?q=<?= $task->customer_location; ?>" target="_blank">Buka di Google Maps</a>
+															<div>
+																<?php
+																if ($task->customer_wa != "") {
+																	$url = "https://wa.me/" . $task->customer_wa;
+																} else {
+																	$url = "#";
+																}
+																?>
+																<a target="_blank" href="<?=$url;?>"><?= $task->customer_wa; ?></a> <?= $task->customer_phone; ?>
+															</div>
 														</div>
 													</div>
 													<div class="col-xs-12 detail" style="">

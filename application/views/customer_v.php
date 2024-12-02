@@ -93,7 +93,7 @@
 												} else {
 													$disabled = 'disabled="disabled"';
 												} ?>
-												<input type="text" <?= $disabled; ?> autofocus class="form-control" id="customer_saldo" name="customer_saldo" placeholder="Saldo Customer" value="<?= $customer_saldo; ?>">
+												<input type="text" <?= $disabled; ?> class="form-control" id="customer_saldo" name="customer_saldo" placeholder="Saldo Customer" value="<?= $customer_saldo; ?>">
 											</div>
 											<div class="col-sm-offset-2 col-sm-10" style="font-size:10px; color:#FF0000;">
 												Penambahan saldo dapat dilakukan di petty atau big cash.
@@ -135,29 +135,218 @@
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_email">Customer Email:</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_email" name="customer_email" placeholder="Enter Email" value="<?= $customer_email; ?>">
+											<input type="text" class="form-control" id="customer_email" name="customer_email" placeholder="Enter Email" value="<?= $customer_email; ?>">
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_country">Country:</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_country" name="customer_country" placeholder="Enter Country" value="<?= $customer_country; ?>">
+											<input type="text" class="form-control" id="customer_country" name="customer_country" placeholder="Enter Country" value="<?= ($customer_country!="")?$customer_country:"Indonesia"; ?>">
 										</div>
+									</div>
+
+
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_phone">Phone:</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="customer_phone" name="customer_phone" placeholder="Enter Phone" value="<?= $customer_phone; ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_fax">Fax:</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="customer_fax" name="customer_fax" placeholder="Enter Fax" value="<?= $customer_fax; ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_cp">Contact Person:</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="customer_cp" name="customer_cp" placeholder="Enter CP" value="<?= $customer_cp; ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_wa">Whatsapp:<br /><span style="font-size:10px; color:red;">(wajib berawalan 62 di depan tanpa +)</span></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="customer_wa" name="customer_wa" placeholder="62xxxxx" value="<?= $customer_wa; ?>">
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="provinsi_id">Provinsi:</label>
+										<div class="col-sm-10">
+											<select onchange="pilihinkota()" class="form-control select2" id="provinsi_id" name="provinsi_id">
+												<option  data-name="" value="" <?= ($provinsi_id == "") ? "selected" : ""; ?>>Pilih Provinsi</option>
+												<?php $provinsi = $this->db->order_by("provinsi_name", "ASC")->get("provinsi");
+												foreach ($provinsi->result() as $provinsi) { ?>
+													<option  data-name="<?= $provinsi->provinsi_name; ?>" value="<?= $provinsi->provinsi_id; ?>" <?= ($provinsi_id == $provinsi->provinsi_id) ? "selected" : ""; ?>><?= $provinsi->provinsi_name; ?></option>
+												<?php } ?>
+											</select>			
+											<input type="hidden" id="provinsi_name" />
+											<script>
+												function pilihinkota() {
+													let provinsi_id = $("#provinsi_id").val();
+													// alert("<?= base_url("api/pilihinkota"); ?>?provinsi_id="+provinsi_id+"&kota_id=0");
+													$.get("<?= base_url("api/pilihinkota"); ?>", {
+															provinsi_id: provinsi_id,
+															kota_id: '0'
+														})
+														.done(function(data) {
+															$("#kota_id").html(data);
+															
+															const provinsiDropdown = $("#provinsi_id");
+															let provinsiname = provinsiDropdown.find("option:selected").data("name");
+															$("#provinsi_name").val(provinsiname);
+															isimaps();
+															// alert(data);
+														});
+												}
+											</script>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="kota_id">Kota:</label>
+										<div class="col-sm-10">
+											<select onchange="pilihinkecamatan()" class="form-control select2" id="kota_id" name="kota_id">
+												<option  data-name="" value="" <?= ($kota_id == "") ? "selected" : ""; ?>>Pilih Kota</option>
+												<?php
+												$kota = $this->db->order_by("kota_name", "ASC")->get("kota");
+												foreach ($kota->result() as $kota) { ?>
+													<option data-name="<?= $kota->kota_name; ?>"  value="<?= $kota->kota_id; ?>" <?= ($kota_id == $kota->kota_id) ? "selected" : ""; ?>><?= $kota->kota_name; ?></option>
+												<?php } ?>
+											</select>											
+											<input type="hidden" id="kota_name" />
+											<script>
+												function pilihinkecamatan() {
+													let kota_id = $("#kota_id").val();
+													// alert("<?= base_url("api/pilihinkecamatan"); ?>?kota_id="+kota_id+"&kecamatan_id=0");
+													$.get("<?= base_url("api/pilihinkecamatan"); ?>", {
+															kota_id: kota_id,
+															kecamatan_id: '0'
+														})
+														.done(function(data) {
+															$("#kecamatan_id").html(data);
+
+															
+															const kotaDropdown = $("#kota_id");
+															let kotaname = kotaDropdown.find("option:selected").data("name");
+															$("#kota_name").val(kotaname);
+															isimaps();
+															// alert(data);
+														});
+												}
+											</script>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="kecamatan_id">Kecamatan:</label>
+										<div class="col-sm-10">
+											<select onchange="pilihinkelurahan();" class="form-control select2" id="kecamatan_id" name="kecamatan_id">
+												<option data-name="" data-code="" value="" <?= ($kecamatan_id == "") ? "selected" : ""; ?>>Pilih Kecamatan</option>
+												<?php
+												$kecamatan = $this->db->order_by("kecamatan_name", "ASC")
+													->where("kota_id", $kota_id)
+													->get("kecamatan");
+												foreach ($kecamatan->result() as $kecamatan) { ?>
+													<option data-name="<?= $kecamatan->kecamatan_name; ?>" data-code="<?= $kecamatan->kecamatan_code; ?>" value="<?= $kecamatan->kecamatan_id; ?>" <?= ($kecamatan_id == $kecamatan->kecamatan_id) ? "selected" : ""; ?>><?= $kecamatan->kecamatan_name; ?></option>
+												<?php } ?>
+											</select>
+											<input type="hidden" id="kecamatan_code" />
+											<input type="hidden" id="kecamatan_name" />
+											<script>
+												function pilihinkelurahan() {
+													let kecamatan_id = $("#kecamatan_id").val();
+													// alert("<?= base_url("api/pilihinkelurahan"); ?>?kecamatan_id="+kecamatan_id+"&kelurahan_id=0");
+													$.get("<?= base_url("api/pilihinkelurahan"); ?>", {
+															kecamatan_id: kecamatan_id,
+															kelurahan_id: '0'
+														})
+														.done(function(data) {
+															$("#kelurahan_id").html(data);
+
+															const kecamatanDropdown = $("#kecamatan_id");
+															let kecamatancode = kecamatanDropdown.find("option:selected").data("code");
+															$("#kecamatan_code").val(kecamatancode);
+
+															let kecamatanname = kecamatanDropdown.find("option:selected").data("name");
+															$("#kecamatan_name").val(kecamatanname);
+															isicustomercode();
+															isimaps();
+															// alert(data);
+														});
+												}
+											</script>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="kelurahan_id">Kelurahan:</label>
+										<div class="col-sm-10">
+											<select onchange="isikelurahancode();isicustomercode();" class="form-control select2" id="kelurahan_id" name="kelurahan_id">
+												<option data-name="" data-code="" value="" <?= ($kelurahan_id == "") ? "selected" : ""; ?>>Pilih Kelurahan</option>
+												<?php
+												$kelurahan = $this->db->order_by("kelurahan_name", "ASC")
+													->where("kecamatan_id", $kecamatan_id)
+													->get("kelurahan");
+												foreach ($kelurahan->result() as $kelurahan) { ?>
+													<option data-name="<?= $kelurahan->kelurahan_name; ?>" data-code="<?= $kelurahan->kelurahan_code; ?>" value="<?= $kelurahan->kelurahan_id; ?>" <?= ($kelurahan_id == $kelurahan->kelurahan_id) ? "selected" : ""; ?>><?= $kelurahan->kelurahan_name; ?></option>
+												<?php } ?>
+											</select>
+											<input filetype="hidden" id="kelurahan_code" />
+											<input filetype="hidden" id="kelurahan_name" />
+											<script>
+												function isikelurahancode() {
+													const kelurahanDropdown = $("#kelurahan_id");
+													let kelurahancode = kelurahanDropdown.find("option:selected").data("code");
+													$("#kelurahan_code").val(kelurahancode);
+
+													let kelurahanname = kelurahanDropdown.find("option:selected").data("name");
+													$("#kelurahan_name").val(kelurahanname);
+													isicustomercode();
+													isimaps();
+												}
+											</script>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label col-sm-2" for="customer_code">Customer Code:</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="customer_code" name="customer_code" placeholder="Enter code" value="<?= $customer_code; ?>">
+										</div>
+										<script>
+											function isicustomercode() {
+												let customer_name = $("#customer_name").val();
+												let firstSevenChars = customer_name.slice(0, 7);
+												let kecamatancode = $("#kecamatan_code").val();
+												let kelurahancode = $("#kelurahan_code").val();
+												let customerwa = $("#customer_wa").val();
+												let tigacustomerwa = customerwa.slice(-3);
+												let hasil = firstSevenChars + '-' + kecamatancode + kelurahancode + tigacustomerwa;
+												$("#customer_code").val(hasil);												
+											}
+
+											function isimaps(){
+												let provinsi_name = $("#provinsi_name").val();
+												let kotaname = $("#kota_name").val();
+												let kecamatanname = $("#kecamatan_name").val();
+												let kelurahanname = $("#kelurahan_name").val();
+												let hasilmaps = kelurahanname + ',' + kecamatanname + ',' + kotaname + ',' + provinsi_name;
+												$("#customer_maps").val(hasilmaps);
+											}
+										</script>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_address">Customer Address:</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_address" name="customer_address" placeholder="Enter Address" value="<?= $customer_address; ?>">
+											<input type="text" class="form-control" id="customer_address" name="customer_address" placeholder="Enter Address" value="<?= $customer_address; ?>">
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_maps">Maps:</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_maps" name="customer_maps" placeholder="Enter Address" value="<?= $customer_maps; ?>">
+											<input type="text" class="form-control" id="customer_maps" name="customer_maps" placeholder="Enter Address" value="<?= $customer_maps; ?>">
 										</div>
 										<button type="button" id="searchAddress">Cari Alamat</button>
 										<div id="map"></div>
-										<input type="text" name="customer_location" id="customer_location" readonly placeholder="Koordinat (latitude, longitude)" value="<?= $customer_location; ?>"/>
+										<input type="text" name="customer_location" id="customer_location" readonly placeholder="Koordinat (latitude, longitude)" value="<?= $customer_location; ?>" />
 
 										<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 										<script>
@@ -191,8 +380,12 @@
 
 												// Inisialisasi peta
 												<?php
-												if($customer_location==""){$location="-6.200000, 106.816666";}else{$location=$customer_location;}?>
-												const map = L.map('map').setView([<?=$location;?>], 10); // Jakarta
+												if ($customer_location == "") {
+													$location = "-6.200000, 106.816666";
+												} else {
+													$location = $customer_location;
+												} ?>
+												const map = L.map('map').setView([<?= $location; ?>], 10); // Jakarta
 
 												// Tambahkan tile dari OpenStreetMap
 												L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -201,7 +394,7 @@
 												}).addTo(map);
 
 												// Marker
-												const marker = L.marker([<?=$location;?>], {
+												const marker = L.marker([<?= $location; ?>], {
 													draggable: true
 												}).addTo(map);
 
@@ -254,39 +447,15 @@
 										</script>
 									</div>
 									<div class="form-group">
-										<label class="control-label col-sm-2" for="customer_phone">Phone:</label>
-										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_phone" name="customer_phone" placeholder="Enter Phone" value="<?= $customer_phone; ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="control-label col-sm-2" for="customer_fax">Fax:</label>
-										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_fax" name="customer_fax" placeholder="Enter Fax" value="<?= $customer_fax; ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="control-label col-sm-2" for="customer_cp">Contact Person:</label>
-										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_cp" name="customer_cp" placeholder="Enter CP" value="<?= $customer_cp; ?>">
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="control-label col-sm-2" for="customer_wa">Whatsapp:<br /><span style="font-size:10px; color:red;">(wajib berawalan 62 di depan tanpa +)</span></label>
-										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_wa" name="customer_wa" placeholder="Enter Whatsapp Number" value="<?= ($customer_wa == "") ? "62" : $customer_wa; ?>">
-										</div>
-									</div>
-									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_ktp">Identity Number (KTP):</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_ktp" name="customer_ktp" placeholder="Enter Identity Number (KTP)" value="<?= $customer_ktp; ?>">
+											<input type="text" class="form-control" id="customer_ktp" name="customer_ktp" placeholder="Enter Identity Number (KTP)" value="<?= $customer_ktp; ?>">
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label col-sm-2" for="customer_npwp">NPWP:</label>
 										<div class="col-sm-10">
-											<input type="text" autofocus class="form-control" id="customer_npwp" name="customer_npwp" placeholder="Enter NPWP" value="<?= $customer_npwp; ?>">
+											<input type="text" class="form-control" id="customer_npwp" name="customer_npwp" placeholder="Enter NPWP" value="<?= $customer_npwp; ?>">
 										</div>
 									</div>
 
@@ -347,6 +516,7 @@
 												<th>Branch</th>
 												<th>Hunian</th>
 												<th>Customer</th>
+												<th>Code</th>
 												<?php if ($identity->identity_saldocustomer == 1) { ?>
 													<th>Saldo</th>
 												<?php } ?>
@@ -391,6 +561,7 @@
 													<td><?= $customer->branch_name; ?></td>
 													<td><?= $customer->hunian_name; ?></td>
 													<td><?= $customer->customer_name; ?></td>
+													<td><?= $customer->customer_code; ?></td>
 													<?php if ($identity->identity_saldocustomer == 1) { ?>
 														<td><?= number_format($customer->customer_saldo, 0, ",", "."); ?></td>
 													<?php } ?>
