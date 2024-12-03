@@ -57,7 +57,7 @@
                                                 <option value="" <?= ($kecamatan_id == "") ? "selected" : ""; ?>>Pilih Kecamatan</option>
                                                 <?php $kecamatan = $this->db->order_by("kecamatan_name", "ASC")->get("kecamatan");
                                                 foreach ($kecamatan->result() as $kecamatan) { ?>
-                                                    <option value="<?= $kecamatan->kecamatan_id; ?>" <? ($kecamatan_id == $kecamatan->kecamatan_id) ? "selected" : ""; ?>><?= $kecamatan->kecamatan_name; ?></option>
+                                                    <option value="<?= $kecamatan->kecamatan_id; ?>" <?=($kecamatan_id == $kecamatan->kecamatan_id) ? "selected" : ""; ?>><?= $kecamatan->kecamatan_name; ?></option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -90,17 +90,29 @@
                                     <strong><?= $message; ?></strong><br /><?= $uploadkelurahan_picture; ?>
                                 </div>
                             <?php } ?>
+                            <?php 
+                            if(isset($_GET["kota_id"])){
+                                $kota_id=$_GET["kota_id"];
+                            }else{
+                                $kota_id="";
+                            }
+                            if(isset($_GET["kecamatan_id"])){
+                                $kecamatan_id=$_GET["kecamatan_id"];
+                            }else{
+                                $kecamatan_id="";
+                            }
+                            ?>
                             <div class="box">
                                 <form class="form-inline" action="">
                                     <div class="form-group">
                                         <label for="kota">Kota:</label>
                                         <select onchange="pilihkecamatan();" class="form-control select2" id="kota_id" name="kota_id">
-                                            <option value="" <? ($kota_id == "") ? "selected" : ""; ?>>Pilih Kota</option>
+                                            <option value="" <?=($kota_id=="")?"selected":"";?>>Pilih Kota</option>
                                             <?php                                            
                                             if(isset($_GET["kota_id"])){$kota_id=$this->input->get("kota_id");}else{$kota_id=0;}
                                             $kota = $this->db->order_by("kota_name", "ASC")->get("kota");
                                             foreach ($kota->result() as $kota) { ?>
-                                                <option value="<?= $kota->kota_id; ?>" <?= ($kota_id == $kota->kota_id) ? "selected" : ""; ?>><?= $kota->kota_name; ?></option>
+                                                <option value="<?= $kota->kota_id; ?>" <?=($kota_id==$kota->kota_id)?"selected" : ""; ?>><?= $kota->kota_name; ?></option>
                                             <?php } ?>
                                         </select>
                                         <script>
