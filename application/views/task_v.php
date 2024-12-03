@@ -690,7 +690,7 @@
 														<div class="col-xs-4 bold">Customer</div>
 														<div class="col-xs-8">: <?= $task->customer_name; ?><br />
 															<a id="googleMapsLink" href="https://www.google.com/maps?q=<?= $task->customer_location; ?>" target="_blank">Buka di Google Maps</a>
-															<div>
+															<!-- <div>
 																<?php
 																if ($task->customer_wa != "") {
 																	$url = "https://wa.me/" . $task->customer_wa;
@@ -699,7 +699,7 @@
 																}
 																?>
 																<a target="_blank" href="<?=$url;?>"><?= $task->customer_wa; ?></a> <?= $task->customer_phone; ?>
-															</div>
+															</div> -->
 														</div>
 													</div>
 													<div class="col-xs-12 detail" style="">
