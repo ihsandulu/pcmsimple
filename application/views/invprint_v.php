@@ -43,7 +43,7 @@ $identity=$this->db->get("identity")->row();?>
 		
 		<div class="col-md-6 col-sm-6 col-xs-5" style="padding:0px; padding-top:5px; border-radius:5px; ">	
 			<?php if(isset($customer_name)){?>		
-			<div class="col-md-12 col-sm-12 col-xs-12">Customer : <?=$customer_name;?>&nbsp;</div>
+			<div class="col-md-12 col-sm-12 col-xs-12">Customer : <?=$customer_name;?>&nbsp;<?php if($customer_code!=""){?>(<?=$customer_code;?>)<?php }?></div>
 			<?php }?>
 			<?php if(isset($customer_address)){?>
 			<div class="col-md-12 col-sm-12 col-xs-12">Address : <?=$customer_address;?>&nbsp;</div>
