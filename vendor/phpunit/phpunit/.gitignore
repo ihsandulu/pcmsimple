@@ -20,3 +20,6 @@ phpunit.xml
 cache.properties
 .idea
 .ant_targets
+/assets/images
+/application/config/config.php
+/application/config/database.php
