@@ -220,10 +220,12 @@
 										</thead>
 										<tbody>
 											<?php
+											$bmonth = str_pad($month, 2, "0", STR_PAD_LEFT);
 											$gajid = $this->db
 												->join("gaji", "gaji.gaji_id=gajid.gaji_id", "left")
-												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$month"))
+												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
 												->get("gajid");
+												// echo $this->db->last_query();
 											$arr = array();
 											foreach ($gajid->result() as $gajid) {
 												if ($gajid->gajid_type == "0") {
@@ -233,9 +235,8 @@
 													$arr[$gajid->gaji_id]["biaya"][] = $gajid->gajid_nominal;
 												}
 											}
-											// print_r($arr);die;
+											// print_r($arr);
 
-											$bmonth = str_pad($month, 2, "0", STR_PAD_LEFT);
 											$usr = $this->db
 												->join("branch", "branch.branch_id=gaji.branch_id", "left")
 												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
