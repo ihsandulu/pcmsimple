@@ -235,9 +235,10 @@
 											}
 											// print_r($arr);die;
 
+											$bmonth = str_pad($month, 2, "0", STR_PAD_LEFT);
 											$usr = $this->db
 												->join("branch", "branch.branch_id=gaji.branch_id", "left")
-												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$month"))
+												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
 												->order_by("gaji_id", "desc")
 												->get("gaji");
 											// echo $this->db->last_query();
@@ -245,7 +246,7 @@
 											foreach ($usr->result() as $gaji) {
 												$upah = 0;
 												$biaya = 0;
-												$bulan = $bulan_array[substr($gaji->gaji_datetime, 5, 2)];
+												$bulan = $bulan_array[(int)substr($gaji->gaji_datetime, 5, 2)];
 												if (isset($arr[$gaji->gaji_id]["upah"])) {
 													$upah = array_sum($arr[$gaji->gaji_id]["upah"]);
 												}
