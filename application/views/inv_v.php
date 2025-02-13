@@ -460,6 +460,7 @@
 												<th>Amount</th>
 												<th>Payment</th>
 												<th>Receivables (Piutang) </th>
+												<th>Craftsman</th>
 												<?php if (!isset($_GET['report'])) {
 													$col = "col-md-3";
 												} else {
@@ -646,6 +647,18 @@
 													<td><?= number_format($pembayaran, 2, ".", ","); ?></td>
 													<td>
 														<?= number_format($piutang, 2, ".", ","); ?></td>
+
+													<td>
+														<?php
+														$tukang = $this->db
+														->join("user","user.user_id=task.user_id","left")
+														->where("inv_no", $inv->inv_no)
+														->get("task");
+														foreach($tukang->result() as $row){
+															echo $row->user_name.", ";
+														}
+														?>
+													</td>
 													<td style="text-align:center; ">
 														<?php
 														$identity_project = $this->db->get("identity")->row()->identity_project;
