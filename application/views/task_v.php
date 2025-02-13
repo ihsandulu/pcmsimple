@@ -200,6 +200,12 @@
 									</div> -->
 
 									<div class="form-group">
+										<label class="control-label col-sm-2" for="task_modal">Modal:</label>
+										<div class="col-sm-10">
+											<input <?= $disabled ?> class="form-control" type="number" name="task_modal" id="task_modal" value="<?= $task_modal ?>" />
+										</div>
+									</div>
+									<div class="form-group">
 										<label class="control-label col-sm-2" for="task_tips">Tips:</label>
 										<div class="col-sm-10">
 											<select onchange="tips();" id="task_tips" name="task_tips" class="form-control">
@@ -412,7 +418,7 @@
 														<?php } ?>
 														<th>Task</th>
 														<th>Status</th>
-														<th>Tips</th>
+														<th>Modal/Tips</th>
 														<th class="col-md-1">Proof </th>
 													</tr>
 												</thead>
@@ -511,17 +517,18 @@
 															<td><?= $task->task_content; ?></td>
 															<td><?= $status; ?></td>
 															<td>
-																<?= ($task->task_tips == "1") ? "Tanpa Keterangan" : "" ?>
-																<?= ($task->task_tips == "2") ? "Untuk Petugas" : "" ?>
+																Modal : <?= number_format($task->task_modal, 0, ",", "."); ?><br />
+																<?= ($task->task_tips == "1") ? "Tips Tanpa Keterangan" : "" ?>
+																<?= ($task->task_tips == "2") ? "Tips Untuk Petugas" : "" ?>
 																<br />
-																(<?php
-																	if ($task->task_tips > 0) {
-																		if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
-																			echo "";
-																		} else {
-																			echo number_format($task->task_tipsnominal, 0, ",", ".");
-																		}
-																	} ?>)
+																<?php
+																if ($task->task_tips > 0) {
+																	if ($task->task_tips == 1 && $this->session->userdata("position_id") == 2) {
+																		echo "";
+																	} else {
+																		echo "(" . number_format($task->task_tipsnominal, 0, ",", ".") . ")";
+																	}
+																} ?>
 															</td>
 															<td><?php if ($task->task_picture != "") {
 																	$gambar = $task->task_picture;
