@@ -180,7 +180,7 @@ class gaji_M extends CI_Model
 					}
 					
 					$inv = $this->db
-						->select("SUM(invproduct_qty*invproduct_price)AS jml, task.task_bantuan")
+						->select("SUM(invproduct_qty*invproduct_price)AS jml, task.task_bantuan, task.task_modal")
 						->join("invproduct", "invproduct.inv_no=inv.inv_no", "left")
 						->join("task", "task.inv_no=inv.inv_no", "left")
 						->where("inv_date>=", $tanggal_awal)
@@ -190,11 +190,13 @@ class gaji_M extends CI_Model
 					$total = 0;
 					foreach ($inv->result() as $inv) {
 						$total = $inv->jml;
+						$modal = $inv->task_modal;
 						if ($inv->task_bantuan == 1) {
-							$tunjangan_nominal = $total * 50 / 100;
+							$tunjangan_nominal = ($total-$modal) * 50 / 100;
 						} else {
-							$tunjangan_nominal = $total * $pengali;
+							$tunjangan_nominal = ($total-$modal) * $pengali;
 						}
+						$tunjangan_nominal+=$modal;
 					}
 				} else if ($tunjangan->tunjangan_type == "bonusomzet") {
 					$inv = $this->db
