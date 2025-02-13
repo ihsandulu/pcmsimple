@@ -41,6 +41,10 @@
 		#datatransaksi {
 			margin-top: 20px;
 		}
+
+		.mt-1 {
+			margin-top: 5px !important;
+		}
 	</style>
 
 
@@ -761,18 +765,26 @@
 															</div>
 														</div>
 														<?php if ($status == "Done") { ?>
-															<div class="col-xs-12" style="">
+															<div class="col-xs-12 detail" style="">
 																<form action="" method="POST" enctype="multipart/form-data">
 																	<div class="form-group">
-																		<label for="email">Komplain:</label>
-																		<input type="text" class="form-control" name="task_komplain" value="<?= $task->task_komplain; ?>">
+																		<div class="col-xs-12 bold">Komplain</div>
+																		<div class="col-xs-12"><input type="text" class="form-control" name="task_komplain" value="<?= $task->task_komplain; ?>"></div>
 																	</div>
 																	<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
 																	<button name="change" value="OK" type="submit" class="btn btn-success">Komplain</button>
 																</form>
 															</div>
 														<?php } ?>
-														<div class="col-xs-12" style="">
+														<div class="col-xs-12 detail" style="">
+															<form action="" method="POST" enctype="multipart/form-data">
+																<div class="col-xs-12 bold">Modal</div>
+																<div class="col-xs-12"><input type="number" class="form-control" name="task_modal" value="<?= $task->task_modal; ?>"></div>
+																<input type="hidden" name="task_id" value="<?= $task->task_id; ?>" />
+																<div class="col-xs-12 mt-1"><button name="change" value="OK" type="submit" class="btn btn-warning">Update Modal</button></div>
+															</form>
+														</div>
+														<div class="col-xs-12  mt-1" style="">
 															<form action="" method="POST" enctype="multipart/form-data">
 																<div class="form-group">
 																	<label for="email">Bukti Selesai:</label>
