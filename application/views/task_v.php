@@ -303,7 +303,9 @@
 							<?php } ?>
 							<div class="box">
 								<?php
-								if ($this->session->userdata("position_id") != 2 && $this->session->userdata("position_id") != 6) { ?>
+								//jika bukan petugas ataupun customer
+								//pilih filter petugas
+								if ($this->session->userdata("position_id") != 2 && $this->session->userdata("position_id") != 6 && !isset($_GET["inv_no"])) { ?>
 									<div style="margin-bottom:30px; border-radius:5px; background-color:#FEEFC2; padding:15px;">
 										<form class="form-inline">
 											<?php
@@ -327,8 +329,11 @@
 								<?php } ?>
 								<?php
 
+								//Data transaksi Task
 								if ($this->session->userdata("position_id") != 6) { ?>
-									<?php if ($this->session->userdata("position_id") == 2) { ?>
+									<?php
+									//Jika Petugas
+									if ($this->session->userdata("position_id") == 2) { ?>
 										<button onclick="bukadata();" class="btn btn-warning fa fa-bars" style="margin-left:20px;"> Buka Data</button>
 										<script>
 											function bukadata() {
@@ -342,37 +347,40 @@
 											});
 										</script>
 									<?php } ?>
+
 									<div id="datatransaksi" class="col-xs-12">
-										<div class="carikonten well">
-											<form class="form-inline cari">
-												<div class="form-group">
-													<label for="from">From</label>
-													<input name="from" type="date" class="form-control date" value="<?= (isset($_GET['from'])) ? $_GET['from'] : date("Y-m-d"); ?>" />
-												</div>
-												<div class="form-group cari">
-													<label for="to">To</label>
-													<input name="to" type="date" class="form-control date" value="<?= (isset($_GET['to'])) ? $_GET['to'] : date("Y-m-d"); ?>" />
-												</div>
-												<?php if (isset($_GET['report'])) { ?>
-													<input type="hidden" name="report" value="ok" />
-												<?php } ?>
-												<button name="search" class="btn btn-primary">
-													<i class="fa fa-search"></i>
-												</button>
-												<?php
-												if (isset($_GET['from'])) {
-													$from = $_GET['from'];
-												} else {
-													$from = date("Y-m-d");
-												}
-												if (isset($_GET['to'])) {
-													$to = $_GET['to'];
-												} else {
-													$to = date("Y-m-d");
-												}
-												?>
-											</form>
-										</div>
+										<?php if (!isset($_GET["inv_no"])) { ?>
+											<div class="carikonten well">
+												<form class="form-inline cari">
+													<div class="form-group">
+														<label for="from">From</label>
+														<input name="from" type="date" class="form-control date" value="<?= (isset($_GET['from'])) ? $_GET['from'] : date("Y-m-d"); ?>" />
+													</div>
+													<div class="form-group cari">
+														<label for="to">To</label>
+														<input name="to" type="date" class="form-control date" value="<?= (isset($_GET['to'])) ? $_GET['to'] : date("Y-m-d"); ?>" />
+													</div>
+													<?php if (isset($_GET['report'])) { ?>
+														<input type="hidden" name="report" value="ok" />
+													<?php } ?>
+													<button name="search" class="btn btn-primary">
+														<i class="fa fa-search"></i>
+													</button>
+													<?php
+													if (isset($_GET['from'])) {
+														$from = $_GET['from'];
+													} else {
+														$from = date("Y-m-d");
+													}
+													if (isset($_GET['to'])) {
+														$to = $_GET['to'];
+													} else {
+														$to = date("Y-m-d");
+													}
+													?>
+												</form>
+											</div>
+										<?php } ?>
 										<div id="pemisah" class="tarik">
 											<table id="dataTable2" class="table table-condensed table-hover">
 												<thead>
@@ -406,9 +414,10 @@
 												</thead>
 												<tbody>
 													<?php
-
-													$this->db->where("task.task_date >=", $from);
-													$this->db->where("task.task_date <=", $to);
+													if (!isset($_GET["inv_no"])) {
+														$this->db->where("task.task_date >=", $from);
+														$this->db->where("task.task_date <=", $to);
+													}
 													if (isset($_GET['inv_no'])) {
 														$this->db->where("inv_no", $_GET['inv_no']);
 													}
@@ -532,7 +541,10 @@
 										</div>
 									</div>
 								<?php } ?>
+
+
 								<?php
+								// Task -- jika petugas atau customer
 								if ($this->session->userdata("position_id") == 2 || $this->session->userdata("position_id") == 6) {
 									if (isset($_GET['inv_no'])) {
 										$this->db->where("inv_no", $_GET['inv_no']);
@@ -698,7 +710,7 @@
 																	$url = "#";
 																}
 																?>
-																<a target="_blank" href="<?=$url;?>"><?= $task->customer_wa; ?></a> <?= $task->customer_phone; ?>
+																<a target="_blank" href="<?= $url; ?>"><?= $task->customer_wa; ?></a> <?= $task->customer_phone; ?>
 															</div> -->
 														</div>
 													</div>
