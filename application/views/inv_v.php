@@ -655,7 +655,7 @@
 														->where("inv_no", $inv->inv_no)
 														->get("task");
 														foreach($tukang->result() as $row){
-															echo $row->user_name.", ";
+															echo $row->user_name." (".$row->task_time."), ";
 														}
 														?>
 													</td>
