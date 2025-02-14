@@ -145,7 +145,7 @@ class gaji_M extends CI_Model
 					}
 				}
 			}
-			
+
 			if ($this->input->post("gaji_description") == "") {
 				$input["gaji_description"] = "Payroll " . $input["gaji_name"] . " Bulan:" . date("M") . " Periode" . $tanggal_awal . " s/d " . $tanggal_akhir;
 			}
@@ -178,26 +178,49 @@ class gaji_M extends CI_Model
 					} else {
 						$pengali = 1;
 					}
-					
+
 					$inv = $this->db
-						->select("SUM(invproduct_qty*invproduct_price)AS jml, task.task_bantuan, task.task_modal")
-						->join("invproduct", "invproduct.inv_no=inv.inv_no", "left")
 						->join("task", "task.inv_no=inv.inv_no", "left")
 						->where("inv_date>=", $tanggal_awal)
 						->where("inv_date<=", $tanggal_akhir)
 						->where("task.user_id", $input["user_id"])
 						->get("inv");
+					// echo $this->db->last_query();die;
 					$total = 0;
+					$tunjangannominal = 0;
+
+					//hanya looping task
 					foreach ($inv->result() as $inv) {
-						$total = $inv->jml;
-						$modal = $inv->task_modal;
-						if ($inv->task_bantuan == 1) {
-							$tunjangan_nominal = ($total-$modal) * 50 / 100;
-						} else {
-							$tunjangan_nominal = ($total-$modal) * $pengali;
+						$product = $this->db
+							->select("SUM(invproduct_qty*invproduct_price)AS jml")
+							->where("inv_no", $inv->inv_no)
+							->group_by("inv_no")
+							->get("invproduct");
+						$jml = 0;
+						foreach ($product->result() as $product) {
+							$jml = $product->jml;
 						}
-						$tunjangan_nominal+=$modal;
+
+						$modal = $inv->task_modal;
+						$tipsn = $inv->task_tips;
+						$tips = 0;
+						if($tipsn==2){
+							$tips = $inv->task_tipsnominal;
+						}
+						$tunjangannominaln = 0;
+						$total = $jml - $inv->inv_discount;
+						if ($inv->task_bantuan == 1) {
+							$tunjangannominaln = ($total - $modal) * 50 / 100;
+						} else {
+							$tunjangannominaln = ($total - $modal) * $pengali;
+							// echo "(".$total." - ".$modal.") * ".$pengali;die;
+							// echo $tunjangannominaln;die;
+						}						
+						// echo $tunjangannominaln." + ".$modal." + ".$tips;die;
+						$tunjangannominaln += ($modal + $tips);
+						$tunjangannominal += $tunjangannominaln;
 					}
+					$tunjangan_nominal = $tunjangannominal;
 				} else if ($tunjangan->tunjangan_type == "bonusomzet") {
 					$inv = $this->db
 						->select("SUM(invproduct_qty*invproduct_price)AS jml")

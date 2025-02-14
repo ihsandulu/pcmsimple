@@ -419,6 +419,7 @@
 														<th>Task</th>
 														<th>Status</th>
 														<th>Modal/Tips</th>
+														<th>Bantuan</th>
 														<th class="col-md-1">Proof </th>
 													</tr>
 												</thead>
@@ -460,6 +461,7 @@
 															$warna = "background-color:#000000!important; color:white!important;";
 															$status = "";
 														}
+														$bantuan=array("","Ya");
 													?>
 														<tr style="<?= $warna; ?>">
 															<td style="text-align:center; ">
@@ -530,6 +532,7 @@
 																	}
 																} ?>
 															</td>
+															<td><?= $bantuan[$task->task_bantuan]; ?></td>
 															<td><?php if ($task->task_picture != "") {
 																	$gambar = $task->task_picture;
 																} else {
