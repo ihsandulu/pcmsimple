@@ -452,6 +452,37 @@
 						</div>
 					</div>
 				</div>
+				<div class="col-xs-12 col-md-6 col-lg-3">
+					<div class="panel panel-info panel-widget" style="background-color:#FDC8BB">
+						<div class="row no-padding">
+							<div class="col-sm-2 col-lg-2 widget-left">
+								<i class="fa fa-money iconutama" style="font-size:18px; color:#CA4004"></i>
+							</div>
+							<div class="col-sm-10 col-lg-10 widget-right">
+								<div class="large" style="font-size:18px;">
+									<?php
+									$opnt = $this->db
+										->select("SUM(task_modal)As modal")
+										->join("inv", "inv.inv_no=task.inv_no", "left")
+										->where("inv_date >=", $dari)
+										->where("inv_date <=", $ke)
+										->get_where("task");
+										// echo $this->db->last_query();
+										$modal=0;
+										foreach ($opnt->result() as $opnt) {
+											$modal=$opnt->modal;
+											if($modal==null){
+												$modal=0;
+											}
+										}
+									echo number_format($modal, 0, ".", ",");
+									?>
+								</div>
+								<div class="text-muted">Modal Teknisi</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
 			</div>
 
