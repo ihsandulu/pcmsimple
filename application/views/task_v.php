@@ -461,7 +461,7 @@
 															$warna = "background-color:#000000!important; color:white!important;";
 															$status = "";
 														}
-														$bantuan=array("","Ya");
+														$bantuan = array("", "Ya");
 													?>
 														<tr style="<?= $warna; ?>">
 															<td style="text-align:center; ">
@@ -512,7 +512,11 @@
 																<td><?= $task->inv_no; ?></td>
 															<?php } ?>
 															<td><?= $task->task_no; ?></td>
-															<td><?= $task->customer_name; ?> <?= $task->customer_wa; ?> <?= $task->customer_phone; ?></td>
+															<td><?= $task->customer_name; ?>
+																<?php if ($this->session->userdata("position_id") != 2 && $this->session->userdata("position_id") != 6) { ?>
+																	<?= $task->customer_wa; ?> <?= $task->customer_phone; ?>
+																<?php } ?>
+															</td>
 															<?php if ($this->session->userdata("position_id") != 6) { ?>
 																<td><?= $task->user_name; ?></td>
 															<?php } ?>
