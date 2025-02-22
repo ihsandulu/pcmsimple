@@ -349,6 +349,11 @@
 						</a>
 					</li>
 					<li class="backwhite">
+						<a href="<?=site_url("kasbon");?>">
+							<span class="fa fa-money" style="margin-right:17px;"></span> Kasbon 
+						</a>
+					</li>
+					<li class="backwhite">
 						<a href="<?=site_url("gaji?month=".date("n"));?>">
 							<span class="fa fa-money" style="margin-right:17px;"></span> Payroll 
 						</a>
@@ -461,6 +466,11 @@
 					<li class="backwhite">
 						<a href="<?=site_url("petty?report=ok&dari=".date("Y-m-d")."&ke=".date("Y-m-d"));?>">
 							<span class="fa fa-money" style="margin-right:17px;"></span> Petty Cash 
+						</a>
+					</li>
+					<li class="backwhite">
+						<a href="<?=site_url("kasbon?report=ok");?>">
+							<span class="fa fa-money" style="margin-right:17px;"></span> Kasbon 
 						</a>
 					</li>
                     <li class="backwhite">
