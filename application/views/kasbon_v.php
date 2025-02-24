@@ -196,8 +196,8 @@
                                         $(document).ready(function() {
                                             <?php $checked = ($kasbon_cash == "kas_id") ? "true" : "false"; ?>
                                             <?php $tchecked = ($kasbon_cash == "kas_id") ? "Big Cash" : "Petty Cash"; ?>
-                                            $("#kasbon_cash").prop('checked', <?=$checked;?>);
-                                            $('#cashLabel').text('<?=$tchecked;?>');
+                                            $("#kasbon_cash").prop('checked', <?= $checked; ?>);
+                                            $('#cashLabel').text('<?= $tchecked; ?>');
                                             $('#kasbon_cash').change(function() {
                                                 if ($(this).prop('checked')) {
                                                     $('#cashLabel').text('Big Cash');
@@ -259,7 +259,7 @@
                                 </div>
 
                                 <div id="collapse4" class="body table-reskasbonnsive">
-                                    <table id="dataTable" class="table table-condensed table-hover">
+                                    <table id="dataTablee" class="table table-condensed table-hover">
                                         <thead>
                                             <tr>
 
@@ -314,6 +314,7 @@
                                                     </td>
                                                     <td><?= $kasbon->kasbon_date; ?></td>
                                                     <td style="text-align:left;"><?= $kasbon->user_name; ?> (<?= $kasbon->position_name; ?>)</td>
+                                                    <td style="text-align:left;"><?= number_format($kasbon->kasbon_amount, 0, ",", "."); ?></td>
                                                     <td style="text-align:left;"><?= $kasbon->kasbon_remarks; ?></td>
                                                     <td style="text-align:left;"><?= $kas; ?></td>
                                                 </tr>
@@ -330,6 +331,22 @@
 
         <!-- /#wrap -->
         <?php require_once("footer.php"); ?>
+        <script>
+            $(document).ready(function() {
+                $("#dataTablee").DataTable({
+                    dom: 'Bfrtip', // Menampilkan tombol
+                    buttons: [{
+                        extend: 'print',
+                        text: 'Print',
+                        className: 'btn btn-warning text-white',
+                        exportOptions: {
+                            columns: ':not(:first-child)' 
+                        }
+                    }]
+                });
+            });
+        </script>
+
 </body>
 
 </html>
