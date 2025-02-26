@@ -163,15 +163,28 @@ class gaji_M extends CI_Model
 			$tunjangan = $this->db->where("user_id", $input["user_id"])->get("tunjangan");
 			foreach ($tunjangan->result() as $tunjangan) {
 				$tunjangan_nominal = 0;
+				$pendapatan_bersih = 0;
 				$gajid["gajid_name"] = $tunjangan->tunjangan_name;
 				$gajid["gaji_id"] = $gaji_id;
 				$gajid["gajid_type"] = 0;
+				$tmodal = 0;
+				$ttips = 0;
+				$tnett = 0;
 				if ($tunjangan->tunjangan_type == "harian") {
 					$hari = 0;
 					$basic = $tunjangan->tunjangan_nominal;
 					$tunjangan_nominal = $hari * $basic;
+					$pendapatan_bersih = $tunjangan_nominal;
+					
+					$tmodal = 0;
+					$ttips = 0;
+					$tnett = $tunjangan_nominal;
 				} else if ($tunjangan->tunjangan_type == "bulanan") {
 					$tunjangan_nominal = $tunjangan->tunjangan_nominal;
+					$pendapatan_bersih = $tunjangan_nominal;
+					$tmodal = 0;
+					$ttips = 0;
+					$tnett = $tunjangan_nominal;
 				} else if ($tunjangan->tunjangan_type == "project") {
 					if ($tunjangan->tunjangan_persen == "1") {
 						$pengali = $tunjangan->tunjangan_nominal / 100;
@@ -188,7 +201,6 @@ class gaji_M extends CI_Model
 					// echo $this->db->last_query();die;
 					$total = 0;
 					$tunjangannominal = 0;
-
 					//hanya looping task
 					foreach ($inv->result() as $inv) {
 						$product = $this->db
@@ -200,11 +212,13 @@ class gaji_M extends CI_Model
 						foreach ($product->result() as $product) {
 							$jml = $product->jml;
 						}
+						$pendapatan_bersih += $jml;
+						$pendapatan_bersih -= $inv->inv_discount;
 
 						$modal = $inv->task_modal;
 						$tipsn = $inv->task_tips;
 						$tips = 0;
-						if($tipsn==2){
+						if ($tipsn == 2) {
 							$tips = $inv->task_tipsnominal;
 						}
 						$tunjangannominaln = 0;
@@ -215,10 +229,15 @@ class gaji_M extends CI_Model
 							$tunjangannominaln = ($total - $modal) * $pengali;
 							// echo "(".$total." - ".$modal.") * ".$pengali;die;
 							// echo $tunjangannominaln;die;
-						}						
+						}
 						// echo $tunjangannominaln." + ".$modal." + ".$tips;die;
+
+						$tnett += $tunjangannominaln;
 						$tunjangannominaln += ($modal + $tips);
 						$tunjangannominal += $tunjangannominaln;
+
+						$tmodal += $modal;
+						$ttips += $tips;
 					}
 					$tunjangan_nominal = $tunjangannominal;
 				} else if ($tunjangan->tunjangan_type == "bonusomzet") {
@@ -229,8 +248,9 @@ class gaji_M extends CI_Model
 						->where("inv_date<=", $tanggal_akhir)
 						->get("inv");
 					$total = 0;
+					$discount = 0;
 					foreach ($inv->result() as $inv) {
-						$total = $inv->jml;
+						$total = $inv->jml-$inv->inv_discount;
 					}
 
 
@@ -254,13 +274,47 @@ class gaji_M extends CI_Model
 							}
 						}
 					}
+
+					$pendapatan_bersih = $tunjangan_nominal;
+					
+					$tmodal = 0;
+					$ttips = 0;
+					$tnett = $tunjangan_nominal;
 				}
 				if ($tunjangan_nominal > 0) {
+					$gajid["gajid_modal"] = $tmodal;
+					$gajid["gajid_tips"] = $ttips;
+					$gajid["gajid_nett"] = $tnett;
+
+					
 					$gajid["gajid_nominal"] = $tunjangan_nominal;
 					$this->db->insert("gajid", $gajid);
 					$nominaltotal += $tunjangan_nominal;
 				}
 			}
+			$update["gaji_tnominalinv"] = $pendapatan_bersih;
+
+			//kasbon
+			$kasbon = $this->db
+				->where("user_id", $input["user_id"])
+				->where("kasbon_date>=", $tanggal_awal)
+				->where("kasbon_date<=", $tanggal_akhir)
+				->get("kasbon");
+			$tkasbon = 0;
+			foreach ($kasbon->result() as $kasbon) {
+				$tkasbon += $kasbon->kasbon_amount;
+			}
+			if ($tkasbon > 0) {
+				$kgajid["gajid_nominal"] = $tkasbon;
+				$kgajid["gajid_name"] = "Kasbon";
+				$kgajid["gaji_id"] = $gaji_id;
+				$kgajid["gajid_type"] = "1";
+				$this->db->insert("gajid", $kgajid);
+				$nominaltotal -= $tkasbon;
+			}
+
+
+
 			if ($input["gaji_source"] == "kas_id") {
 				$inputkas["kas_count"] = $nominaltotal;
 				$inputkas["kas_inout"] = "out";

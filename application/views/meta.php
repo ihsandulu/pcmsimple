@@ -167,9 +167,6 @@ $angka = 1530093;
 		border: none !important;
 	}
 
-	.border {
-		border: black solid 1px;
-	}
 
 	body {
 		font-family: 'Source Sans Pro', sans-serif;
@@ -187,6 +184,11 @@ $angka = 1530093;
 		#judulshow {
 			display: none;
 		}
+
+		.border {
+			border: black solid 1px;
+		}
+
 	}
 
 	@media screen and (max-width: 480px) {
@@ -205,6 +207,10 @@ $angka = 1530093;
 
 		#dashboard {
 			margin-top: 50px;
+		}
+
+		.border {
+			border: black solid 1px;
 		}
 	}
 
@@ -611,6 +617,11 @@ $angka = 1530093;
 		/* Warna abu-abu lembut */
 		color: #333 !important;
 		/* Warna teks lebih gelap jika diinginkan */
+	}
+
+	
+	.border {
+		border: black solid 1px !important;
 	}
 </style>
 

@@ -19,14 +19,22 @@ class gaji_print extends CI_Controller {
 		
 		$in=$this->db
 		->join("branch","branch.branch_id=gaji.branch_id","left")
+		->join("user","user.user_id=gaji.user_id","left")
+		->join("position","position.position_id=user.position_id","left")
 		->where("gaji.gaji_no",$this->input->get("gaji_no"))
 		->get("gaji");
-		//echo $this->db->last_query();
+		// echo $this->db->last_query();die;
 		foreach($in->result() as $gaji){	
 			foreach($this->db->list_fields('gaji') as $field){
 				 $data[$field]=$gaji->$field;	
 			}	
 			foreach($this->db->list_fields('branch') as $field){
+				 $data[$field]=$gaji->$field;	
+			}	
+			foreach($this->db->list_fields('user') as $field){
+				 $data[$field]=$gaji->$field;	
+			}	
+			foreach($this->db->list_fields('position') as $field){
 				 $data[$field]=$gaji->$field;	
 			}	
 		}
