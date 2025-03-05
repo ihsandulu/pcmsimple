@@ -83,25 +83,25 @@
 										<label class="control-label col-sm-2" for="gajitype_id ">Period:</label>
 										<div class="col-sm-10">
 											<select onchange="pilihtype();" class="form-control" id="gajitype_id" name="gajitype_id">
-											<option value="0" <?= ($gajitype_id == "0") ? "selected" : ""; ?>>Select Type</option>
-											<option value="-1" <?= ($gajitype_id == "-1") ? "selected" : ""; ?>>Current Periode</option>
+												<option value="0" <?= ($gajitype_id == "0") ? "selected" : ""; ?>>Select Type</option>
+												<option value="-1" <?= ($gajitype_id == "-1") ? "selected" : ""; ?>>Current Periode</option>
 												<?php $gajitype = $this->db->order_by("gajitype_name", "ASC")->get("gajitype");
 												foreach ($gajitype->result() as $gajitype) { ?>
 													<option value="<?= $gajitype->gajitype_id; ?>" <?= ($gajitype_id == $gajitype->gajitype_id) ? "selected" : ""; ?>><?= $gajitype->gajitype_name; ?></option>
 												<?php } ?>
 											</select>
-											<script> 
-											function pilihtype(){
-												let gajitype = $("#gajitype_id").val();
-												if(gajitype==-1){
-													$(".periode").show();
-												}else{
-													$(".periode").hide();
+											<script>
+												function pilihtype() {
+													let gajitype = $("#gajitype_id").val();
+													if (gajitype == -1) {
+														$(".periode").show();
+													} else {
+														$(".periode").hide();
+													}
 												}
-											}
-											$(document).ready(function(){
-												pilihtype();
-											});											
+												$(document).ready(function() {
+													pilihtype();
+												});
 											</script>
 										</div>
 									</div>
@@ -182,21 +182,87 @@
 								</div>
 							<?php } ?>
 							<div class="box">
-								<div style="margin-bottom:30px; border-radius:5px; background-color:#FEEFC2; padding:15px;">
+								<div class="col-md-6" style="margin-bottom:30px; border-radius:5px; background-color:#FEEFC2; padding:15px;">
 									<form class="form-inline">
-										<div class="form-group">
-											<label for="email">From:</label>
+									<?php 
+										if(isset($_GET['fromtglgajian'])){ 
+											$fromtglgajian = $_GET['fromtglgajian'];
+										}else{
+											$fromtglgajian = date("Y-m-d");
+										}
+										if(isset($_GET['totglgajian'])){ 
+											$totglgajian = $_GET['totglgajian'];
+										}else{
+											$totglgajian = date("Y-m-d");
+										}
+										?>
+										<!-- <div class="form-group">
+											<label for="email">Month:</label>
 											<select name="month" class="form-control">
 												<?php for ($x = 1; $x <= 12; $x++) { ?>
 													<option value="<?= $x; ?>" <?= ($month == $x) ? "selected" : ""; ?>><?= $bulan_array[$x]; ?></option>
 												<?php } ?>
 											</select>
+										</div> -->
+
+										<label>Payday:</label>
+										<div class="form-group">
+											<label for="fromtglgajian">From:</label>
+											<input type="date" class="form-control" name="fromtglgajian" value="<?= $fromtglgajian; ?>" />
 										</div>
+										<div class="form-group">
+											<label for="totglgajian">To:</label>
+											<input type="date" class="form-control" name="totglgajian" value="<?= $totglgajian; ?>" />
+										</div>
+
 
 										<?php if (isset($_GET['report'])) { ?>
 											<input type="hidden" name="report" value="ok">
 										<?php } ?>
-										<button style="margin-right:30px;" type="submit" class="btn btn-default">Search</button>
+										<button name="btnpdate" style="margin-right:30px;" type="submit" class="btn btn-default">Search</button>
+										<?php if (isset($_GET['report'])) { ?>
+											<a target="_blank" href="<?= site_url("gaji_list_print?report=ok&month=" . $month); ?>" class="btn btn-success fa fa-print"></a> <?php } ?>
+									</form>
+
+								</div>
+								<div class="col-md-6" style="margin-bottom:30px; border-radius:5px; background-color:#FEEFC2; padding:15px;">
+									<form class="form-inline">
+										<?php 
+										if(isset($_GET['fromtgltransaksi'])){ 
+											$fromtgltransaksi = $_GET['fromtgltransaksi'];
+										}else{
+											$fromtgltransaksi = date("Y-m-d");
+										}
+										if(isset($_GET['totgltransaksi'])){ 
+											$totgltransaksi = $_GET['totgltransaksi'];
+										}else{
+											$totgltransaksi = date("Y-m-d");
+										}
+										?>
+										<!-- <div class="form-group">
+											<label for="email">Month:</label>
+											<select name="month" class="form-control">
+												<?php for ($x = 1; $x <= 12; $x++) { ?>
+													<option value="<?= $x; ?>" <?= ($month == $x) ? "selected" : ""; ?>><?= $bulan_array[$x]; ?></option>
+												<?php } ?>
+											</select>
+										</div> -->
+
+										<label>Transaction Date:</label>
+										<div class="form-group">
+											<label for="fromtgltransaksi">From:</label>
+											<input type="date" class="form-control" name="fromtgltransaksi" value="<?= $fromtgltransaksi; ?>" />
+										</div>
+										<div class="form-group">
+											<label for="totgltransaksi">To:</label>
+											<input type="date" class="form-control" name="totgltransaksi" value="<?= $totgltransaksi; ?>" />
+										</div>
+
+
+										<?php if (isset($_GET['report'])) { ?>
+											<input type="hidden" name="report" value="ok">
+										<?php } ?>
+										<button name="btntdate" style="margin-right:30px;" type="submit" class="btn btn-default">Search</button>
 										<?php if (isset($_GET['report'])) { ?>
 											<a target="_blank" href="<?= site_url("gaji_list_print?report=ok&month=" . $month); ?>" class="btn btn-success fa fa-print"></a> <?php } ?>
 									</form>
@@ -221,11 +287,19 @@
 										<tbody>
 											<?php
 											$bmonth = str_pad($month, 2, "0", STR_PAD_LEFT);
+											if(isset($_GET['btntdate'])){
+												$this->db->where("SUBSTR(gaji_datetime,1,10) >=", $fromtgltransaksi);
+												$this->db->where("SUBSTR(gaji_datetime,1,10) <=", $totgltransaksi);
+											}
+											if(isset($_GET['btnpdate'])){
+												$this->db->where("gaji_from >=", $fromtglgajian);
+												$this->db->where("gaji_from <=", $totglgajian);
+											}
 											$gajid = $this->db
 												->join("gaji", "gaji.gaji_id=gajid.gaji_id", "left")
-												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
+												// ->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
 												->get("gajid");
-												// echo $this->db->last_query();
+											// echo $this->db->last_query();
 											$arr = array();
 											foreach ($gajid->result() as $gajid) {
 												if ($gajid->gajid_type == "0") {
@@ -237,9 +311,17 @@
 											}
 											// print_r($arr);
 
+											if(isset($_GET['btntdate'])){
+												$this->db->where("SUBSTR(gaji_datetime,1,10) >=", $fromtgltransaksi);
+												$this->db->where("SUBSTR(gaji_datetime,1,10) <=", $totgltransaksi);
+											}
+											if(isset($_GET['btnpdate'])){
+												$this->db->where("gaji_from >=", $fromtglgajian);
+												$this->db->where("gaji_from <=", $totglgajian);
+											}
 											$usr = $this->db
 												->join("branch", "branch.branch_id=gaji.branch_id", "left")
-												->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
+												// ->where("SUBSTR(gaji_datetime,1,7)", date("Y-$bmonth"))
 												->order_by("gaji_id", "desc")
 												->get("gaji");
 											// echo $this->db->last_query();
@@ -260,12 +342,12 @@
 														<td style="padding-left:0px; padding-right:0px;">
 
 															<form method="post" class="col-md-3" style="padding:0px;">
-																<?php $url=base_url("gajid?gaji_id=".$gaji->gaji_id."&gaji_source=".$gaji->gaji_source."&kas_id=".$gaji->kas_id."&petty_id=".$gaji->petty_id);?>
+																<?php $url = base_url("gajid?gaji_id=" . $gaji->gaji_id . "&gaji_source=" . $gaji->gaji_source . "&kas_id=" . $gaji->kas_id . "&petty_id=" . $gaji->petty_id); ?>
 																<button type="button" onclick="bukaproduk('<?= $url; ?>')" data-toggle="tooltip" title="Detail" href="#" class="btn btn-primary " name="payment" value="OK">
 																	<span class="fa fa-money" style="color:white;"></span> </button>
 															</form>
 															<form method="post" class="col-md-3" style="padding:0px;">
-																<a target="_blank" href="<?= site_url("gaji_print?gaji_no=" . $gaji->gaji_no."&gaji_id=" . $gaji->gaji_id); ?>" class="btn  btn-success"><span class="fa fa-print" style="color:white;"></span> </a>
+																<a target="_blank" href="<?= site_url("gaji_print?gaji_no=" . $gaji->gaji_no . "&gaji_id=" . $gaji->gaji_id); ?>" class="btn  btn-success"><span class="fa fa-print" style="color:white;"></span> </a>
 															</form>
 
 															<form method="post" class="col-md-3" style="padding:0px;">

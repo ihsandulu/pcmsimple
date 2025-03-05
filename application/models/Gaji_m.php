@@ -125,8 +125,7 @@ class gaji_M extends CI_Model
 			$input["gaji_no"] = $sno;
 
 			$input['branch_id'] = $this->session->userdata("branch_id");
-			$this->db->insert("gaji", $input);
-			$gaji_id = $this->db->insert_id();
+			
 			//echo $this->db->last_query();die;
 
 
@@ -143,8 +142,15 @@ class gaji_M extends CI_Model
 						$tanggal_awal = date("Y-m-" . $gajitype->gajitype_awaldate, strtotime("first day of -1 month"));
 						$tanggal_akhir = date("Y-m-" . $gajitype->gajitype_akhirdate);
 					}
+					$input["gaji_from"]=$tanggal_awal;
+					$input["gaji_to"]=$tanggal_akhir;
 				}
 			}
+
+			$this->db->insert("gaji", $input);
+			$gaji_id = $this->db->insert_id();
+
+
 
 			if ($this->input->post("gaji_description") == "") {
 				$input["gaji_description"] = "Payroll " . $input["gaji_name"] . " Bulan:" . date("M") . " Periode" . $tanggal_awal . " s/d " . $tanggal_akhir;
