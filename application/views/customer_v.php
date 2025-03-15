@@ -7,8 +7,8 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 	<style>
 		#map {
-			height: 400px;
-			width: 100%;
+			height: 800px!important;
+			width: 1000px!important;
 		}
 
 		input,
@@ -346,7 +346,7 @@
 										</div>
 										<button type="button" id="searchAddress">Cari Alamat</button>
 										<div id="map"></div>
-										<input type="text" name="customer_location" id="customer_location" readonly placeholder="Koordinat (latitude, longitude)" value="<?= $customer_location; ?>" />
+										<input type="text" name="customer_location" id="customer_location"  placeholder="Koordinat (latitude, longitude)" value="<?= $customer_location; ?>" />
 
 										<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 										<script>
