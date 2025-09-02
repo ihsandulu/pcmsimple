@@ -122,3 +122,27 @@
         scrollableTable.scrollLeft = scrollLeft - walk;
     });
 </script>
+<?php
+// Path folder gambar
+$folder = FCPATH . 'assets/images/task_picture/';
+
+// Ambil semua file gambar
+$files = glob($folder . '*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+
+// Batas umur file (3 minggu = 21 hari)
+$limit_time = time() - (21 * 24 * 60 * 60);
+
+foreach ($files as $file) {
+    // Cek apakah ini file (bukan folder)
+    if (is_file($file)) {
+        $filename = basename($file); // nama file saja, tanpa path
+        $file_time = filemtime($file);
+
+        // Kalau bukan noimage.png dan sudah lebih lama dari 3 minggu, hapus
+        if ($filename !== 'noimage.png' && $file_time < $limit_time) {
+            unlink($file);
+            // echo "Deleted: " . $filename . "<br>";
+        }
+    }
+}
+?>
