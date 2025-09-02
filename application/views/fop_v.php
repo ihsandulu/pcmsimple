@@ -60,22 +60,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-12 col-lg-12">
                 <div class="panel panel-default">
-                    <div class="panel-body">
-                        <?php if ($identity->identity_duedate == 1) { ?>
-                            <div class="alert alert-danger">
-                                Due date in this week :
-                                <?php $due = $this->db
-                                    ->where("inv_duedate >=", date("Y-m-d", strtotime("-3 days")))
-                                    ->where("inv_duedate <=", date("Y-m-d", strtotime("+7 days")))
-                                    ->group_by("inv_no")
-                                    ->get("inv");
-                                //echo $this->db->last_query();
-                                foreach ($due->result() as $due) { ?>
-                                    <strong><?= $due->inv_no; ?></strong>,
-                                <?php } ?>
-
-                            </div>
-                        <?php } ?>
+                    <div class="panel-body">                       
                         <?php
                         if (isset($_POST['new']) || isset($_POST['edit'])) {
                         ?>
@@ -415,21 +400,6 @@
                                 <div style="margin-bottom:30px; border-radius:5px; background-color:#FEEFC2; padding:15px;">
                                     <form class="form-inline">
                                         <div class="form-group">
-                                            <label for="email">From:</label>
-                                            <input onChange="listinv()" autocomplete="off" type="text" class="form-control date" id="dari" name="dari" value="<?= $dari; ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="pwd">To:</label>
-                                            <input onChange="listinv()" autocomplete="off" type="text" class="form-control date" id="ke" name="ke" value="<?= $ke; ?>">
-                                        </div>
-                                        <div class="form-group">
-                                            <select class="form-control" name="project">
-                                                <option value="" <?= ($project == "") ? "selected" : ""; ?>>All</option>
-                                                <option value="OK" <?= ($project == "OK") ? "selected" : ""; ?>>Project</option>
-                                                <option value="Non" <?= ($project == "Non") ? "selected" : ""; ?>>Non Project</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
                                             <select class="form-control" name="bulan">
                                                 <option value="3" <?= ($bulan == "3") ? "selected" : ""; ?>>3 Bulan</option>
                                                 <option value="5" <?= ($bulan == "5") ? "selected" : ""; ?>>5 Bulan</option>
@@ -447,12 +417,6 @@
                                             }
                                         </script>
                                     </form>
-
-                                    <div class="row" style="margin-top:20px; border-top:white 1px solid; padding-top:20px;">
-                                        <div class="col-md-4"><label>Amount : &nbsp;</label><span id="tinvoice"></span></div>
-                                        <div class="col-md-4"><label>Payment : &nbsp;</label><span id="tpembayaran"></span></div>
-                                        <div class="col-md-4"><label>Receivables : &nbsp;</label><span id="tpiutang"></span></div>
-                                    </div>
                                 </div>
                                 <div id="collapse4" class="body table-responsive">
                                     <script>
