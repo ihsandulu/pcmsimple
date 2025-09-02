@@ -547,7 +547,7 @@
                                                     <td><?= $status[$inv->inv_status]; ?> <span id="sfoll<?= $inv->inv_id; ?>"><?= $foll[$inv->inv_fop]; ?></span></td>
                                                     <td><?= $inv->inv_no; ?></td>
                                                     <td>
-                                                        <?= ucwords($inv->customer_name); ?>
+                                                        <?= ucwords($inv->customer_name ?? ''); ?>
                                                     </td>
                                                     <?php if ($identity->identity_project == "1") {
                                                         if ($this->session->userdata("position_id") == 1 || $this->session->userdata("position_id") == 2 || $this->session->userdata("position_id") == 5 || $this->session->userdata("position_id") == 7) {
