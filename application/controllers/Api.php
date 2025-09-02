@@ -17,6 +17,14 @@ class api extends CI_Controller
 		$this->djson(array("connect" => "ok"));
 	}
 
+	public function fop()
+	{
+		$input["inv_fop"]=$_GET["fop"];
+		$where["inv_id"]=$_GET["id"];
+		$this->db->update("inv", $input, $where);
+		echo $this->db->last_query();
+	}
+
 	public function tampilproduct()
 	{
 		$identity = $this->db->get("identity")->row();
