@@ -46,14 +46,14 @@
             <div class="col-md-10">
                 <h1 class="page-header"> Followup Customer</h1>
             </div>
-            
+
         </div><!--/.row-->
 
 
         <div class="row">
             <div class="col-xs-12 col-md-12 col-lg-12">
                 <div class="panel panel-default">
-                    <div class="panel-body">                       
+                    <div class="panel-body">
                         <?php
                         if (isset($_POST['new']) || isset($_POST['edit'])) {
                         ?>
@@ -411,18 +411,6 @@
                                     </form>
                                 </div>
                                 <div id="collapse4" class="body table-responsive">
-                                    <script>
-                                        $('#dataTableinv1').DataTable({
-                                            dom: 'Bfrtip',
-                                            buttons: [{
-                                                extend: 'excelHtml5',
-                                                text: 'Export Excel',
-                                                title: 'Invoice Data'
-                                            }],
-                                            ordering: false, // <- matikan sorting bawaan DataTables
-                                            "iDisplayLength": 100
-                                        });
-                                    </script>
                                     <div id="test"></div>
                                     <table id="dataTableinv1" class="table table-condensed table-hover">
                                         <thead>
@@ -671,6 +659,19 @@
 
     <!-- /#wrap -->
     <?php require_once("footer.php"); ?>
+
+    <script>
+        $('#dataTableinv1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excelHtml5',
+                text: 'Export Excel',
+                title: 'Invoice Data'
+            }],
+            ordering: false, // <- matikan sorting bawaan DataTables
+            "iDisplayLength": 100
+        });
+    </script>
 </body>
 
 </html>
