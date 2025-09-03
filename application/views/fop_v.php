@@ -46,14 +46,7 @@
             <div class="col-md-10">
                 <h1 class="page-header"> Followup Customer</h1>
             </div>
-            <?php if (!isset($_POST['new']) && !isset($_POST['edit']) && !isset($_GET['report'])) { ?>
-                <form method="POST" class="col-md-2">
-                    <h1 class="page-header col-md-12">
-                        <button name="new" class="btn btn-info btn-block btn-lg" value="OK" style="">New</button>
-                        <input type="hidden" name="inv_id" />
-                    </h1>
-                </form>
-            <?php } ?>
+            
         </div><!--/.row-->
 
 
@@ -409,7 +402,6 @@
                                             <input type="hidden" name="report" value="ok">
                                         <?php } ?>
                                         <button style="margin-right:30px;" type="submit" class="btn btn-default">Search</button>
-                                        <a id="listinv" target="_blank" href="<?= site_url("listinvoiceprint?dari=" . $dari . "&ke=" . $ke); ?>" type="submit" class="btn btn-info fa fa-print"> List Invoice</a>
 
                                         <script>
                                             function listinv() {
@@ -649,7 +641,7 @@
                                                     fop: fop
                                                 })
                                                 .done(function(data) {
-                                                    $("#test").text(data);
+                                                    // $("#test").text(data);
                                                 });
                                             folup(id, fop);
                                         }
