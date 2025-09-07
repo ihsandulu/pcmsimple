@@ -27,6 +27,23 @@
         $bulan = "3";
     }
     ?>
+    <style>
+        .f22 {
+            font-size: 22px;
+        }
+
+        .f12 {
+            font-size: 12px;
+        }
+
+        .gray {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
 
 </head>
 
@@ -44,7 +61,9 @@
 
         <div class="row">
             <div class="col-md-10">
-                <h1 class="page-header"> Followup Customer</h1>
+                <div class="page-header f22 bold gray"> Followup Customer<br />
+                    <span class="f12 gray">(Teransaksi Terakhir Customer yang tidak order Cuci AC)</span>
+                </div>
             </div>
 
         </div><!--/.row-->
@@ -417,7 +436,7 @@
                                             <tr>
                                                 <th class="">Action</th>
                                                 <th>No.</th>
-                                                <th>Date</th>
+                                                <th>Transaksi Terakhir</th>
                                                 <th>Status</th>
                                                 <th>Invoice No. </th>
                                                 <th>Customer</th>
@@ -438,54 +457,42 @@
                                             $tpembayaran = 0;
                                             $tpiutang = 0;
 
-                                            $lock = $this->db->get("identity")->row()->identity_lockproduct;
-
-
-                                            if (isset($_GET['project'])) {
-                                                switch ($_GET['project']) {
-                                                    case "OK":
-                                                        $this->db->where("project_id >", "0");
-                                                        break;
-                                                    case "Non":
-                                                        $this->db->where("project_id", "0");
-                                                        break;
-                                                    default:
-                                                        break;
-                                                }
-                                            }
-
-                                            //satu customer satu project
-                                            if ($this->session->userdata("user_project") != "" && $lock == 1) {
-                                                $this->db->where("inv.project_id", $this->session->userdata("user_project"));
-                                            }
-
-                                            //simple payment
-                                            if ($identity->identity_simple == 1) {
-                                                $this->db->join("sjkeluar", "sjkeluar.inv_no=inv.inv_no", "left");
-                                            }
-
-                                            //project
-                                            if ($identity->identity_project == 1) {
-                                                $this->db->join("project", "project.project_id=inv.project_id", "left");
-                                            }
-
-                                            $usr = $this->db
-                                                ->select("*,customer.customer_id, customer.customer_name, MAX(inv.inv_date) as last_order_date")
+                                            $customercuci = $this->db
+                                                ->distinct()
+                                                ->select("customer.customer_id")
+                                                ->from("inv")
                                                 ->join("invproduct", "invproduct.inv_no = inv.inv_no", "left")
                                                 ->join("product", "product.product_id = invproduct.product_id", "left")
-                                                ->join("branch", "branch.branch_id = inv.branch_id", "left")
                                                 ->join("customer", "customer.customer_id = inv.customer_id", "left")
                                                 ->group_start()
                                                 ->like("product.product_name", "Cuci AC")
                                                 ->or_like("product.product_name", "Cuci Besar AC")
                                                 ->group_end()
-                                                ->group_by("customer.customer_id")
-                                                ->having("last_order_date <", date('Y-m-d', strtotime('-' . $bulan . ' months')))
+                                                ->where("inv.inv_date >=", date('Y-m-d', strtotime('-' . $bulan . 'months')))
+                                                ->get();
+
+                                            $customer_ids = array_column($customercuci->result_array(), 'customer_id');
+
+
+
+                                            // Subquery: ambil inv_id terakhir per customer
+                                            $subquery = $this->db
+                                                ->select("customer_id, MAX(inv_id) as last_inv_id")
+                                                ->from("inv")
+                                                ->group_by("customer_id")
+                                                ->get_compiled_select();
+
+                                            // Query utama: join ke subquery agar dapat detail inv terakhir + data customer
+                                            $usr = $this->db
+                                                ->select("inv.*, customer.*")
+                                                ->from("inv")
+                                                ->join("customer", "customer.customer_id = inv.customer_id", "left")
+                                                ->join("($subquery) as last_inv", "last_inv.last_inv_id = inv.inv_id", "inner")
+                                                ->where_not_in("customer.customer_id", $customer_ids)
                                                 ->order_by("inv.inv_date", "asc")
-                                                ->get("inv");
+                                                ->get();
 
-
-                                            // echo $this->db->last_query();
+                                            // Loop hasil
                                             $no = 1;
                                             foreach ($usr->result() as $inv) {
                                                 if ($inv->inv_ppn == 1) {
@@ -504,7 +511,7 @@
                                                 $foll = array("", "(Followup)");
                                             ?>
                                                 <tr>
-                                                    <td style="text-align:center; ">
+                                                    <td style="text-align:center; " data-wa="<?= $inv->customer_wa; ?>">
                                                         <div class="row">
                                                             <a data-toggle="tooltip" title="Follow Up" target="_blank" href="https://wa.me/<?= $inv->customer_wa; ?>" class="btn btn-sm btn-success col-6">
                                                                 <span class="fa fa-whatsapp" style="color:white;"></span>
@@ -524,7 +531,12 @@
                                                     </td>
                                                     <td><?= $no++; ?></td>
                                                     <td><?= $inv->inv_date; ?></td>
-                                                    <td><?= $status[$inv->inv_status]; ?> <span id="sfoll<?= $inv->inv_id; ?>"><?= $foll[$inv->inv_fop]; ?></span></td>
+                                                    <td>
+                                                        <?= $status[$inv->inv_status]; ?>
+                                                        <span id="sfoll<?= $inv->inv_id; ?>">
+                                                            <?= $foll[$inv->inv_fop]; ?>
+                                                        </span>
+                                                    </td>
                                                     <td><?= $inv->inv_no; ?></td>
                                                     <td>
                                                         <?= ucwords($inv->customer_name ?? ''); ?>
@@ -661,7 +673,7 @@
     <?php require_once("footer.php"); ?>
 
     <script>
-        $('#dataTableinv1').DataTable({
+        $('#dataTableinv2').DataTable({
             dom: 'Bfrtip',
             buttons: [{
                 extend: 'excelHtml5',
@@ -670,6 +682,60 @@
             }],
             ordering: false, // <- matikan sorting bawaan DataTables
             "iDisplayLength": 100
+        });
+        $('#dataTableinv1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excelHtml5',
+                text: 'Export Excel',
+                title: 'Invoice Data',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function(data, row, column, node) {
+                            // kolom WA (kolom pertama)
+                            if (column === 0) {
+                                let wa = node.getAttribute('data-wa') || data;
+                                wa = String(wa).replace(/[^0-9]/g, '');
+                                return "https://wa.me/" + wa;
+                            }
+
+                            // ambil semua teks, termasuk dari child (misalnya span Followup)
+                            let text = $(node).text().trim();
+
+                            // rapikan spasi berlebihan
+                            text = text.replace(/\s+/g, ' ');
+
+                            // fallback kalau kosong
+                            return text || String(data).replace(/(<([^>]+)>)/ig, '').trim();
+                        }
+                    }
+                },
+                customize: function(xlsx) {
+                    let sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                    // cari semua cell di kolom A (kolom pertama / WA)
+                    $('row c[r^="A"]', sheet).each(function() {
+                        let cell = $(this);
+                        let v = cell.find('v').text();
+
+                        if (v && v.startsWith('https://wa.me/')) {
+                            // ganti cell jadi formula =HYPERLINK("url","url")
+                            let url = v;
+                            cell.empty(); // kosongkan isi cell
+                            cell.attr('t', 'str'); // tipe string formula
+                            cell.append(
+                                '<f>HYPERLINK("' + url + '","' + url + '")</f>'
+                            );
+                        }
+                    });
+                }
+            }],
+            ordering: false,
+            paging: false,
+            searching: false,
+            info: false,
+            iDisplayLength: -1
         });
     </script>
 </body>
