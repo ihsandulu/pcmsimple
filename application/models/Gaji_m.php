@@ -358,7 +358,7 @@ class gaji_M extends CI_Model
 				$update["petty_id"] = $this->db->insert_id();
 			}
 
-
+			$update["gaji_datetime"] = $tanggal_akhir;
 			$wupdate["gaji_id"] = $gaji_id;
 			$this->db->where($wupdate);
 			$this->db->update("gaji", $update);
