@@ -125,7 +125,7 @@ class gaji_M extends CI_Model
 			$input["gaji_no"] = $sno;
 
 			$input['branch_id'] = $this->session->userdata("branch_id");
-			
+
 			//echo $this->db->last_query();die;
 
 
@@ -142,8 +142,8 @@ class gaji_M extends CI_Model
 						$tanggal_awal = date("Y-m-" . $gajitype->gajitype_awaldate, strtotime("first day of -1 month"));
 						$tanggal_akhir = date("Y-m-" . $gajitype->gajitype_akhirdate);
 					}
-					$input["gaji_from"]=$tanggal_awal;
-					$input["gaji_to"]=$tanggal_akhir;
+					$input["gaji_from"] = $tanggal_awal;
+					$input["gaji_to"] = $tanggal_akhir;
 				}
 			}
 
@@ -176,12 +176,13 @@ class gaji_M extends CI_Model
 				$tmodal = 0;
 				$ttips = 0;
 				$tnett = 0;
+				$total = 0;
 				if ($tunjangan->tunjangan_type == "harian") {
 					$hari = 0;
 					$basic = $tunjangan->tunjangan_nominal;
 					$tunjangan_nominal = $hari * $basic;
 					$pendapatan_bersih = $tunjangan_nominal;
-					
+
 					$tmodal = 0;
 					$ttips = 0;
 					$tnett = $tunjangan_nominal;
@@ -247,18 +248,35 @@ class gaji_M extends CI_Model
 					}
 					$tunjangan_nominal = $tunjangannominal;
 				} else if ($tunjangan->tunjangan_type == "bonusomzet") {
-					$inv = $this->db
-						->select("SUM(invproduct_qty*invproduct_price)AS jml")
-						->join("invproduct", "invproduct.inv_no=inv.inv_no", "left")
-						->where("inv_date>=", $tanggal_awal)
-						->where("inv_date<=", $tanggal_akhir)
-						->get("inv");
-					$total = 0;
-					$discount = 0;
-					foreach ($inv->result() as $inv) {
-						$total = $inv->jml-$inv->inv_discount;
+					//pemasukkan
+					$invpayment = $this->db
+						->join("invpaymentproduct", "invpaymentproduct.invpayment_no=invpayment.invpayment_no", "left")
+						->where("invpayment_date >=", $tanggal_awal)
+						->where("invpayment_date <=", $tanggal_akhir)
+						->order_by("invpayment.invpayment_date", "desc")
+						->get("invpayment");
+					// echo $this->db->last_query();die;
+					$totalpenjualan = 0;
+					foreach ($invpayment->result() as $invproduct) {
+						$totalpenjualan += $invproduct->invpaymentproduct_amount * $invproduct->invpaymentproduct_qty;
 					}
+					$total = 0;
 
+					//pengeluaran
+					$invspayment = $this->db
+						->join("invspaymentproduct", "invspaymentproduct.invspayment_no=invspayment.invspayment_no", "left")
+						->join("biaya", "biaya.biaya_id=invspaymentproduct.biaya_id", "left")
+						->where("invspayment_date >=", $tanggal_awal)
+						->where("invspayment_date <=", $tanggal_akhir)
+						->order_by("invspayment.invspayment_date", "desc")
+						->get("invspayment");
+					$totalpembelian = 0;
+					// echo $this->db->last_query();die;
+					$no = 1;
+					foreach ($invspayment->result() as $invsproduct) {
+						$totalpembelian += $invsproduct->invspaymentproduct_amount * $invsproduct->invspaymentproduct_qty;
+					}
+					$total = $totalpenjualan - $totalpembelian;
 
 					$operator = $tunjangan->tunjangan_operator;
 					$omzetawal = $tunjangan->tunjangan_omzet;
@@ -282,7 +300,7 @@ class gaji_M extends CI_Model
 					}
 
 					$pendapatan_bersih = $tunjangan_nominal;
-					
+
 					$tmodal = 0;
 					$ttips = 0;
 					$tnett = $tunjangan_nominal;
@@ -292,8 +310,9 @@ class gaji_M extends CI_Model
 					$gajid["gajid_tips"] = $ttips;
 					$gajid["gajid_nett"] = $tnett;
 
-					
+
 					$gajid["gajid_nominal"] = $tunjangan_nominal;
+					$gajid["gajid_omzet"] = $total;
 					$this->db->insert("gajid", $gajid);
 					$nominaltotal += $tunjangan_nominal;
 				}

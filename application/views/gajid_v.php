@@ -34,9 +34,9 @@
                 <form method="post" class="col-md-4">
                     <h1 class="page-header col-md-12">
                         <button name="new" class="btn btn-info btn-lg" value="OK" style=" float:right;margin:2px;">New</button>
-						<button type="button" onclick="tutup();" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
-							Back
-						</button>		
+                        <button type="button" onclick="tutup();" class="btn btn-warning btn-lg" style="float:right; margin:2px;">
+                            Back
+                        </button>
                         <input type="hidden" name="gajid_id" />
                     </h1>
                 </form>
@@ -70,16 +70,16 @@
                                     <div class="form-group">
                                         <label class="control-label col-sm-2" for="gajid_nominal">Nominal:</label>
                                         <div class="col-sm-10">
-                                        <input type="text" class="form-control" name="gajid_nominal" value="<?= $gajid_nominal; ?>" />
-                                        <input type="hidden" class="form-control" name="gajidnominal" value="<?= $gajid_nominal; ?>" />
+                                            <input type="text" class="form-control" name="gajid_nominal" value="<?= $gajid_nominal; ?>" />
+                                            <input type="hidden" class="form-control" name="gajidnominal" value="<?= $gajid_nominal; ?>" />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-sm-2" for="gajid_type">Type:</label>
                                         <div class="col-sm-10">
                                             <select type="text" autofocus class="form-control" id="gajid_type" name="gajid_type">
-                                            <option value="0" <?= ($gajid_type == "0") ? "selected" : ""; ?>>Upah</option>
-                                            <option value="1" <?= ($gajid_type == "1") ? "selected" : ""; ?>>Biaya</option>
+                                                <option value="0" <?= ($gajid_type == "0") ? "selected" : ""; ?>>Upah</option>
+                                                <option value="1" <?= ($gajid_type == "1") ? "selected" : ""; ?>>Biaya</option>
                                             </select>
                                         </div>
                                     </div>
@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
 
-                                    
+
 
                                     <input type="hidden" name="gajid_id" value="<?= $gajid_id; ?>" />
                                     <input type="hidden" name="gaji_id" value="<?= $this->input->get("gaji_id"); ?>" />
@@ -185,7 +185,13 @@
                                                     <?php } ?>
                                                     <td><?= $no++; ?></td>
                                                     <td><?= $gajid->gajid_name; ?></td>
-                                                    <td><?= number_format($gajid->gajid_nominal, 0, ",", "."); ?></td>
+                                                    <td>
+                                                        Nominal : <?= number_format($gajid->gajid_nominal, 0, ",", "."); ?>
+                                                        <?php
+                                                        if ($gajid->gajid_omzet > 0) { ?>
+                                                            <br />Omzet : <?= number_format($gajid->gajid_omzet, 0, ",", "."); ?>
+                                                        <?php } ?>
+                                                    </td>
                                                     <td><?= $type[$gajid->gajid_type]; ?></td>
                                                     <td><?= $gajid->gajid_hari; ?></td>
                                                     <td><?= number_format($gajid->gajid_basic, 0, ",", "."); ?></td>
