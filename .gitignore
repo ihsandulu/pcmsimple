@@ -3,3 +3,4 @@
 application/config/config.php
 application/config/database.php
 ci_sessions
+assets/images/task_picture/*

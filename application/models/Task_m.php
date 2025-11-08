@@ -143,10 +143,10 @@ class task_M extends CI_Model
 					$input[$e] = $this->input->post($e);
 				}
 			}
-			if(isset($input["task_picture"])){
-				$input["task_done"] = date("Y-m-d H:i:s");
-				$input["task_finished"] = date("Y-m-d");
-			}
+			// if(isset($input["task_picture"])){
+			$input["task_done"] = date("Y-m-d H:i:s");
+			$input["task_finished"] = date("Y-m-d");
+			// }
 			$this->db->update("task", $input, array("task_id" => $this->input->post("task_id")));
 			// print_r(($input));
 			// echo $this->db->last_query();die;
